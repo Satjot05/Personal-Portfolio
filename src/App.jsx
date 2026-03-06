@@ -513,7 +513,7 @@ function About() {
     { icon: Brain, text: "Applied AI Research", color: "text-violet-400" },
     { icon: Code2, text: "Full Stack MERN", color: "text-cyan-400" },
     { icon: Layers, text: "DSA & Problem Solving", color: "text-emerald-400" },
-    { icon: Award, text: "Hackathon Winner", color: "text-amber-400" },
+    { icon: Award, text: "Hackathon Runner Up", color: "text-amber-400" },
   ];
 
   return (
@@ -837,7 +837,7 @@ function Projects() {
           className="text-center mt-12"
         >
           <a
-            href="https://github.com"
+            href="https://github.com/Satjot05"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 text-slate-400 hover:text-violet-300 text-sm font-medium transition-colors duration-200 group"
@@ -1060,7 +1060,7 @@ function Footer() {
             <span className="text-violet-400 font-medium">Satjot Singh Saini</span>
           </span>
         </div>
-        <span>B.Tech CSE (AI & ML) · 2024–2025</span>
+        <span>B.Tech CSE (AI & ML) · 2023–2027</span>
         <span>
           Built with React · Tailwind · Framer Motion
         </span>
