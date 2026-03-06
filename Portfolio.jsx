@@ -905,7 +905,7 @@ function Projects() {
           className="text-center mt-12"
         >
           <a
-            href="https://github.com"
+            href="https://github.com/Satjot05"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 text-slate-400 hover:text-violet-300 text-sm font-medium transition-colors duration-200 group"
@@ -949,13 +949,13 @@ function Contact() {
     {
       icon: Github,
       label: "GitHub",
-      href: "https://github.com",
+      href: "https://github.com/Satjot05",
       color: "hover:border-slate-400/40 hover:text-slate-300",
     },
     {
       icon: Linkedin,
       label: "LinkedIn",
-      href: "https://linkedin.com",
+      href: "www.linkedin.com/in/satjot-singh-saini",
       color: "hover:border-blue-400/40 hover:text-blue-400",
     },
     {
