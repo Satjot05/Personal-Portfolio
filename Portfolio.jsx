@@ -655,7 +655,7 @@ function About() {
                   {`:\n`}
                   {"  "}
                   <span className="text-slate-500">name</span> ={" "}
-                  <span className="text-emerald-300">"Ravi Kumar Yadav"</span>
+                  <span className="text-emerald-300">"Satjot Singh Saini"</span>
                   {`\n`}
                   {"  "}
                   <span className="text-slate-500">year</span> ={" "}
@@ -1130,7 +1130,7 @@ function Footer() {
           <Terminal size={13} className="text-violet-500" />
           <span>
             Designed & built by{" "}
-            <span className="text-violet-400 font-medium">Ravi Kumar Yadav</span>
+            <span className="text-violet-400 font-medium">Satjot Singh Saini</span>
           </span>
         </div>
         <span>B.Tech CSE (AI & ML) · 2024–2025</span>
