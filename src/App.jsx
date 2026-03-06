@@ -880,13 +880,13 @@ function Contact() {
     {
       icon: Github,
       label: "GitHub",
-      href: "https://github.com",
+      href: "https://github.com/Satjot05",
       color: "hover:border-slate-400/40 hover:text-slate-300",
     },
     {
       icon: Linkedin,
       label: "LinkedIn",
-      href: "https://linkedin.com",
+      href: "https://www.linkedin.com/in/satjot-singh-saini/",
       color: "hover:border-blue-400/40 hover:text-blue-400",
     },
     {
