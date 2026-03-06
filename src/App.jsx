@@ -264,8 +264,8 @@ function Navbar() {
               </button>
             ))}
             <motion.a
-              href="/resume.pdf"
-              download
+              href="/Satjot-Trident-Resume.docx"
+              download="Satjot-Trident-Resume.docx"
               whileHover={{ scale: 1.04 }}
               whileTap={{ scale: 0.97 }}
               className="ml-4 px-4 py-2 text-sm font-semibold text-white bg-gradient-to-r from-violet-600 to-purple-600 rounded-lg hover:from-violet-500 hover:to-purple-500 transition-all duration-200 shadow-lg shadow-violet-500/20"
@@ -303,8 +303,8 @@ function Navbar() {
                 </button>
               ))}
               <a
-                href="/resume.pdf"
-                download
+                href="/Satjot-Trident-Resume.docx"
+                download="Satjot-Trident-Resume.docx"
                 className="mt-2 px-4 py-3 text-sm font-semibold text-white bg-gradient-to-r from-violet-600 to-purple-600 rounded-lg text-center"
               >
                 Download Resume
@@ -443,8 +443,8 @@ function Hero() {
           </motion.button>
 
           <motion.a
-            href="/resume.pdf"
-            download
+            href="/Satjot-Trident-Resume.docx"
+            download="Satjot-Trident-Resume.docx"
             whileHover={{ scale: 1.04, y: -2 }}
             whileTap={{ scale: 0.97 }}
             className="flex items-center gap-2 px-7 py-3.5 bg-white/5 text-white font-semibold rounded-xl border border-white/10 hover:bg-white/10 hover:border-white/20 backdrop-blur-sm transition-all duration-300"
