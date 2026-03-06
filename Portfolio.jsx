@@ -1133,7 +1133,7 @@ function Footer() {
             <span className="text-violet-400 font-medium">Satjot Singh Saini</span>
           </span>
         </div>
-        <span>B.Tech CSE (AI & ML) · 2024–2025</span>
+        <span>B.Tech CSE (AI & ML) · 2023–2027</span>
         <span>
           Built with React · Tailwind · Framer Motion
         </span>
