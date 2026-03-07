@@ -1,12 +1,29 @@
 import { useState, useEffect, useRef, createContext, useContext } from "react";
 import { motion, useInView, useScroll, useTransform, AnimatePresence } from "framer-motion";
+import emailjs from "@emailjs/browser";
 import {
   Brain, Code2, Database, Globe, Github, Linkedin,
   Mail, User, Send, ExternalLink, Menu, X,
   ChevronDown, Cpu, Layers, Network, ArrowRight,
   Sparkles, Terminal, Zap, Award, BookOpen, Coffee,
-  MailCheck, Palette, Check
+  MailCheck, Palette, Check, AlertCircle
 } from "lucide-react";
+
+// ─────────────────────────────────────────────────────────────────────
+// EMAILJS CONFIG  ← fill these in after setting up EmailJS
+// ─────────────────────────────────────────────────────────────────────
+// 1. Sign up free at https://www.emailjs.com
+// 2. Add a Gmail service  →  copy the Service ID below
+// 3. Create an Email Template  →  copy the Template ID below
+//    Template variables to use in your template:
+//      {{from_name}}   — sender's name
+//      {{from_email}}  — sender's email
+//      {{message}}     — their message
+//      {{to_name}}     — your name (set as "Satjot" in template or here)
+// 4. Go to Account → API Keys  →  copy your Public Key below
+const EMAILJS_SERVICE_ID  = "service_yqxp5j5";   // e.g. "service_abc123"
+const EMAILJS_TEMPLATE_ID = "template_84vvz2d";  // e.g. "template_xyz789"
+const EMAILJS_PUBLIC_KEY  = "ixm9z_BpjWhmowhgX";   // e.g. "AbCdEfGhIjKlMnOp"
 
 // ─────────────────────────────────────────────────────────────────────
 // THEMES
@@ -299,11 +316,7 @@ function ThemeSwitcher() {
         <span style={{ color: theme.textSub }} className="text-xs hidden sm:inline">{theme.name}</span>
         <div className="flex gap-0.5">
           {theme.preview.map((c, i) => (
-            <div
-              key={i}
-              className="w-2 h-2 rounded-full"
-              style={{ background: c }}
-            />
+            <div key={i} className="w-2 h-2 rounded-full" style={{ background: c }} />
           ))}
         </div>
       </motion.button>
@@ -322,10 +335,7 @@ function ThemeSwitcher() {
             }}
             className="absolute right-0 top-10 w-52 rounded-2xl p-2 z-[200]"
           >
-            <p
-              className="text-[10px] font-mono tracking-widest uppercase px-2 py-1.5 mb-1"
-              style={{ color: theme.textMuted }}
-            >
+            <p className="text-[10px] font-mono tracking-widest uppercase px-2 py-1.5 mb-1" style={{ color: theme.textMuted }}>
               Choose Theme
             </p>
             {Object.values(THEMES).map((t) => (
@@ -342,17 +352,11 @@ function ThemeSwitcher() {
               >
                 <div className="flex gap-1">
                   {t.preview.map((c, i) => (
-                    <div
-                      key={i}
-                      className="w-3 h-3 rounded-full"
-                      style={{ background: c, boxShadow: `0 0 4px ${c}50` }}
-                    />
+                    <div key={i} className="w-3 h-3 rounded-full" style={{ background: c, boxShadow: `0 0 4px ${c}50` }} />
                   ))}
                 </div>
                 <span className="flex-1 text-left">{t.name}</span>
-                {theme.id === t.id && (
-                  <Check size={13} style={{ color: theme.accentText }} />
-                )}
+                {theme.id === t.id && <Check size={13} style={{ color: theme.accentText }} />}
               </motion.button>
             ))}
           </motion.div>
@@ -407,14 +411,13 @@ const SKILLS_DATA = [
 
 const PROJECTS_DATA = [
   {
-    title: "Smart Class Attendance System",
-    tagline: "AI-driven facial recognition for zero-effort attendance",
+    title: "Visual Search Engine",
+    tagline: "VLM-powered semantic image search & understanding",
     description:
-      "Engineered an end-to-end AI pipeline that replaces manual roll-call with real-time facial recognition. The system identifies students from a live camera feed, marks attendance in a database, and surfaces a live dashboard for faculty with analytics, alerts for defaulters, and exportable reports.",
-    tech: ["Python", "OpenCV", "DeepFace", "Flask", "MongoDB", "React"],
-    icon: "🎓",
-    link: "#",
-    github: "#",
+      "Built a semantic visual search engine leveraging Vision Language Models (VLMs) to understand and retrieve images based on natural language queries. The system encodes images into rich multimodal embeddings, enabling context-aware search far beyond traditional keyword or tag-based approaches.",
+    tech: ["Python", "CLIP", "FastAPI", "React", "FAISS", "MongoDB"],
+    icon: "🔍",
+    link: "https://github.com/Satjot05/Visual-Search-Engine-Using-VLM",
   },
   {
     title: "Bus Management Dashboard",
@@ -423,18 +426,16 @@ const PROJECTS_DATA = [
       "A full-featured MERN-stack admin dashboard for managing college bus fleets. Supports real-time location tracking via socket.io, CRUD operations on bus records, route management, driver assignment, and automated schedule notifications for students.",
     tech: ["MongoDB", "Express.js", "React", "Node.js", "Socket.io", "Leaflet"],
     icon: "🚌",
-    link: "#",
-    github: "#",
+    link: "https://github.com/Satjot05/Bus-Attendance-System",
   },
   {
-    title: "Smart Workspace Application",
-    tagline: "Hackathon winner — workspace optimization tool",
+    title: "DocuFlow",
+    tagline: "Intelligent document processing & workflow automation",
     description:
-      "Built during a 24-hour competitive hackathon, this dynamic SPA helps organizations optimize physical workspace utilization. Features include interactive floor-plan maps, live occupancy tracking, hot-desk booking, and team co-location suggestions powered by simple ML heuristics.",
-    tech: ["React", "Tailwind CSS", "Chart.js", "Firebase", "Framer Motion"],
-    icon: "🏢",
-    link: "#",
-    github: "#",
+      "A smart document management platform that automates extraction, classification, and routing of business documents. Uses OCR and NLP to parse invoices, contracts, and forms, then triggers configurable workflows — reducing manual processing time and human error significantly.",
+    tech: ["React", "Node.js", "Tesseract.js", "MongoDB", "Express", "Framer Motion"],
+    icon: "📄",
+    link: "https://github.com/Satjot05/DocuFlow",
   },
 ];
 
@@ -504,10 +505,7 @@ function SectionLabel({ children }) {
   return (
     <motion.div variants={fadeUp} className="flex items-center gap-3 mb-4">
       <span className="h-px w-8" style={{ background: theme.sectionLine }} />
-      <span
-        className="text-xs font-mono tracking-[0.2em] uppercase"
-        style={{ color: theme.sectionBadgeText }}
-      >
+      <span className="text-xs font-mono tracking-[0.2em] uppercase" style={{ color: theme.sectionBadgeText }}>
         {children}
       </span>
     </motion.div>
@@ -564,10 +562,25 @@ function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Auto-highlight nav based on which section is actually visible
+  useEffect(() => {
+    const observers = [];
+    NAV_LINKS.forEach((link) => {
+      const el = document.getElementById(link.toLowerCase());
+      if (!el) return;
+      const observer = new IntersectionObserver(
+        ([entry]) => { if (entry.isIntersecting) setActive(link); },
+        { rootMargin: "-40% 0px -55% 0px", threshold: 0 }
+      );
+      observer.observe(el);
+      observers.push(observer);
+    });
+    return () => observers.forEach((o) => o.disconnect());
+  }, []);
+
   const scrollTo = (id) => {
     document.getElementById(id.toLowerCase())?.scrollIntoView({ behavior: "smooth" });
     setMenuOpen(false);
-    setActive(id);
   };
 
   return (
@@ -589,33 +602,42 @@ function Navbar() {
             className="flex items-center gap-2 cursor-pointer"
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
           >
-            <div
-              className="w-8 h-8 rounded-lg flex items-center justify-center"
-              style={{ background: theme.buttonPrimary }}
-            >
+            <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: theme.buttonPrimary }}>
               <Terminal size={14} className="text-white" />
             </div>
-            <span
-              className="font-bold text-lg tracking-tight"
-              style={{ fontFamily: "'Syne', sans-serif", color: theme.text }}
-            >
+            <span className="font-bold text-lg tracking-tight" style={{ fontFamily: "'Syne', sans-serif", color: theme.text }}>
               dev<span style={{ color: theme.accentText }}>.</span>portfolio
             </span>
           </motion.div>
 
           <nav className="hidden md:flex items-center gap-1">
             {NAV_LINKS.map((link) => (
-              <button
+              <motion.button
                 key={link}
                 onClick={() => scrollTo(link)}
+                whileHover={{ y: -1 }}
+                data-link={link}
                 style={{
                   color: active === link ? theme.accentText : theme.textSub,
-                  background: active === link ? theme.surface : "transparent",
+                  background: active === link ? theme.sectionBadgeBg : "transparent",
+                  border: `1px solid ${active === link ? theme.sectionBadgeBorder : "transparent"}`,
                 }}
-                className="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 hover:opacity-80"
+                onMouseEnter={e => {
+                  e.currentTarget.style.color = theme.accentText;
+                  e.currentTarget.style.background = theme.sectionBadgeBg;
+                  e.currentTarget.style.border = `1px solid ${theme.sectionBadgeBorder}`;
+                }}
+                onMouseLeave={e => {
+                  // Only reset if this link is not the currently active section
+                  const isActive = e.currentTarget.dataset.link === active;
+                  e.currentTarget.style.color = isActive ? theme.accentText : theme.textSub;
+                  e.currentTarget.style.background = isActive ? theme.sectionBadgeBg : "transparent";
+                  e.currentTarget.style.border = `1px solid ${isActive ? theme.sectionBadgeBorder : "transparent"}`;
+                }}
+                className="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200"
               >
                 {link}
-              </button>
+              </motion.button>
             ))}
             <div className="ml-2">
               <ThemeSwitcher />
@@ -623,7 +645,7 @@ function Navbar() {
             <motion.a
               href="/Satjot-Trident-Resume.docx"
               download="Satjot-Trident-Resume.docx"
-              whileHover={{ scale: 1.04 }}
+              whileHover={{ scale: 1.04, boxShadow: `0 6px 25px ${theme.buttonPrimaryShadow}` }}
               whileTap={{ scale: 0.97 }}
               style={{ background: theme.buttonPrimary, boxShadow: `0 4px 15px ${theme.buttonPrimaryShadow}` }}
               className="ml-2 px-4 py-2 text-sm font-semibold text-white rounded-lg transition-all duration-200"
@@ -634,11 +656,7 @@ function Navbar() {
 
           <div className="flex items-center gap-2 md:hidden">
             <ThemeSwitcher />
-            <button
-              style={{ color: theme.textSub }}
-              className="hover:opacity-80 transition"
-              onClick={() => setMenuOpen(!menuOpen)}
-            >
+            <button style={{ color: theme.textSub }} className="hover:opacity-80 transition" onClick={() => setMenuOpen(!menuOpen)}>
               {menuOpen ? <X size={22} /> : <Menu size={22} />}
             </button>
           </div>
@@ -652,11 +670,7 @@ function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.25 }}
-            style={{
-              background: theme.navBg,
-              backdropFilter: "blur(20px)",
-              borderBottom: `1px solid ${theme.border}`,
-            }}
+            style={{ background: theme.navBg, backdropFilter: "blur(20px)", borderBottom: `1px solid ${theme.border}` }}
             className="fixed top-16 inset-x-0 z-40 md:hidden"
           >
             <div className="flex flex-col gap-1 p-4">
@@ -665,7 +679,9 @@ function Navbar() {
                   key={link}
                   onClick={() => scrollTo(link)}
                   style={{ color: theme.textSub }}
-                  className="text-left px-4 py-3 hover:opacity-80 rounded-lg transition text-sm font-medium"
+                  onMouseEnter={e => { e.currentTarget.style.color = theme.accentText; e.currentTarget.style.background = theme.sectionBadgeBg; }}
+                  onMouseLeave={e => { e.currentTarget.style.color = theme.textSub; e.currentTarget.style.background = "transparent"; }}
+                  className="text-left px-4 py-3 rounded-lg transition-all duration-200 text-sm font-medium"
                 >
                   {link}
                 </button>
@@ -743,11 +759,7 @@ function Hero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.6 }}
-          style={{
-            background: theme.sectionBadgeBg,
-            border: `1px solid ${theme.sectionBadgeBorder}`,
-            color: theme.sectionBadgeText,
-          }}
+          style={{ background: theme.sectionBadgeBg, border: `1px solid ${theme.sectionBadgeBorder}`, color: theme.sectionBadgeText }}
           className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-mono tracking-widest mb-8"
         >
           <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: theme.availableDot }} />
@@ -799,13 +811,10 @@ function Hero() {
           className="flex flex-wrap gap-4 justify-center"
         >
           <motion.button
-            whileHover={{ scale: 1.04, y: -2 }}
+            whileHover={{ scale: 1.04, y: -2, boxShadow: `0 12px 35px ${theme.buttonPrimaryShadow}` }}
             whileTap={{ scale: 0.97 }}
             onClick={scrollToProjects}
-            style={{
-              background: theme.buttonPrimary,
-              boxShadow: `0 8px 25px ${theme.buttonPrimaryShadow}`,
-            }}
+            style={{ background: theme.buttonPrimary, boxShadow: `0 8px 25px ${theme.buttonPrimaryShadow}` }}
             className="group flex items-center gap-2 px-7 py-3.5 text-white font-semibold rounded-xl transition-all duration-300"
           >
             View Projects
@@ -815,14 +824,10 @@ function Hero() {
           <motion.a
             href="/Satjot-Trident-Resume.docx"
             download="Satjot-Trident-Resume.docx"
-            whileHover={{ scale: 1.04, y: -2 }}
+            whileHover={{ scale: 1.04, y: -2, borderColor: theme.accentText, color: theme.accentText }}
             whileTap={{ scale: 0.97 }}
-            style={{
-              background: theme.buttonSecBg,
-              border: `1px solid ${theme.buttonSecBorder}`,
-              color: theme.text,
-            }}
-            className="flex items-center gap-2 px-7 py-3.5 font-semibold rounded-xl backdrop-blur-sm transition-all duration-300 hover:opacity-80"
+            style={{ background: theme.buttonSecBg, border: `1px solid ${theme.buttonSecBorder}`, color: theme.text }}
+            className="flex items-center gap-2 px-7 py-3.5 font-semibold rounded-xl backdrop-blur-sm transition-all duration-300"
           >
             Download Resume
             <span style={{ color: theme.accentText }}>↓</span>
@@ -837,10 +842,10 @@ function Hero() {
           style={{ borderTop: `1px solid ${theme.border}` }}
         >
           {[
-            { label: "Projects Built", value: "10+" },
+            { label: "Projects Built", value: "5+" },
             { label: "Hackathons", value: "3" },
             { label: "Technologies", value: "15+" },
-            { label: "CGPA", value: "8.7" },
+            { label: "CGPA", value: "7.3" },
           ].map(({ label, value }) => (
             <div key={label} className="text-center">
               <div className="text-3xl font-black" style={{ fontFamily: "'Syne', sans-serif", color: theme.statValue }}>
@@ -880,21 +885,16 @@ function About() {
   const [ref, isInView] = useScrollReveal();
 
   const highlights = [
-    { icon: Brain, text: "Applied AI Research", colorKey: "accentText" },
-    { icon: Code2, text: "Full Stack MERN", colorKey: "accentText" },
-    { icon: Layers, text: "DSA & Problem Solving", colorKey: "accentText" },
-    { icon: Award, text: "Hackathon Runner Up", colorKey: "accentText" },
+    { icon: Brain, text: "Applied AI Research" },
+    { icon: Code2, text: "Full Stack MERN" },
+    { icon: Layers, text: "DSA & Problem Solving" },
+    { icon: Award, text: "Hackathon Runner Up" },
   ];
 
   return (
     <section id="about" className="py-28 px-6">
       <div className="max-w-6xl mx-auto">
-        <motion.div
-          ref={ref}
-          initial="hidden"
-          animate={isInView ? "show" : "hidden"}
-          variants={stagger(0.12)}
-        >
+        <motion.div ref={ref} initial="hidden" animate={isInView ? "show" : "hidden"} variants={stagger(0.12)}>
           <SectionLabel>About Me</SectionLabel>
           <div className="grid md:grid-cols-2 gap-16 items-center">
             <div>
@@ -922,14 +922,15 @@ function About() {
                   { icon: BookOpen, text: "Always Learning" },
                   { icon: Zap, text: "Fast Executor" },
                 ].map(({ icon: Icon, text }) => (
-                  <span
+                  <motion.span
                     key={text}
+                    whileHover={{ y: -2, borderColor: theme.accentText, color: theme.accentText }}
                     style={{ background: theme.surface, border: `1px solid ${theme.border}`, color: theme.textSub }}
-                    className="flex items-center gap-2 px-3 py-1.5 rounded-full text-sm"
+                    className="flex items-center gap-2 px-3 py-1.5 rounded-full text-sm cursor-default transition-all duration-200"
                   >
                     <Icon size={13} style={{ color: theme.accentText }} />
                     {text}
-                  </span>
+                  </motion.span>
                 ))}
               </motion.div>
             </div>
@@ -939,9 +940,9 @@ function About() {
                 <motion.div
                   key={text}
                   variants={scaleIn}
-                  whileHover={{ y: -4, scale: 1.02 }}
+                  whileHover={{ y: -4, scale: 1.02, borderColor: theme.accentText + "55", boxShadow: `0 8px 25px ${theme.accent}18` }}
                   style={{ background: theme.surface, border: `1px solid ${theme.border}` }}
-                  className="group p-5 rounded-2xl hover:opacity-90 transition-all duration-300 cursor-default"
+                  className="group p-5 rounded-2xl transition-all duration-300 cursor-default"
                 >
                   <Icon size={26} className="mb-3" style={{ color: theme.accentText }} />
                   <span className="text-sm font-medium leading-snug" style={{ color: theme.text }}>{text}</span>
@@ -1029,8 +1030,7 @@ function Skills() {
           <SectionLabel>Technical Skills</SectionLabel>
           <SectionHeading>My Tech Arsenal</SectionHeading>
           <motion.p variants={fadeUp} className="text-lg max-w-xl mx-auto" style={{ color: theme.textSub }}>
-            A curated set of skills spanning intelligent systems, scalable web platforms, and
-            rigorous CS fundamentals.
+            A curated set of skills spanning intelligent systems, scalable web platforms, and rigorous CS fundamentals.
           </motion.p>
         </motion.div>
 
@@ -1046,17 +1046,30 @@ function Skills() {
               <motion.div
                 key={category}
                 variants={scaleIn}
-                whileHover={{ y: -6 }}
+                whileHover={{
+                  y: -8,
+                  boxShadow: `0 16px 45px ${sk.from}28`,
+                }}
                 style={{ background: theme.surface, border: `1px solid ${theme.border}` }}
-                className="group relative p-6 rounded-2xl transition-all duration-400 shadow-xl hover:shadow-2xl"
+                className="group relative p-6 rounded-2xl transition-all duration-300 shadow-xl overflow-hidden"
               >
+                {/* Top glow strip */}
+                <div
+                  className="absolute inset-x-0 top-0 h-[3px] rounded-t-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  style={{ background: `linear-gradient(90deg, ${sk.from}, ${sk.to})` }}
+                />
+
                 <div className="flex items-center gap-3 mb-6">
-                  <div
+                  <motion.div
+                    whileHover={{ scale: 1.12, rotate: 5 }}
                     className="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg"
-                    style={{ background: `linear-gradient(135deg, ${sk.from}, ${sk.to})` }}
+                    style={{
+                      background: `linear-gradient(135deg, ${sk.from}, ${sk.to})`,
+                      boxShadow: `0 4px 14px ${sk.from}40`,
+                    }}
                   >
                     <Icon size={18} style={{ color: sk.icon }} />
-                  </div>
+                  </motion.div>
                   <h3 className="font-bold text-base leading-tight" style={{ fontFamily: "'Syne', sans-serif", color: theme.text }}>
                     {category}
                   </h3>
@@ -1064,10 +1077,6 @@ function Skills() {
                 {items.map((skill, i) => (
                   <SkillBar key={skill.name} {...skill} delay={i} />
                 ))}
-                <div
-                  className="absolute inset-x-0 bottom-0 h-0.5 rounded-b-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                  style={{ background: `linear-gradient(90deg, ${sk.from}, ${sk.to})` }}
-                />
               </motion.div>
             );
           })}
@@ -1082,17 +1091,13 @@ function Skills() {
           {[
             "Python", "TensorFlow", "PyTorch", "scikit-learn", "OpenCV",
             "React", "Node.js", "MongoDB", "Express", "REST APIs",
-            "Git", "Linux", "SQL", "PHP", "Figma",
+            "Git", "Linux", "SQL", "PHP", "Figma", "Framer", "JavaScript"
           ].map((tech) => (
             <motion.span
               key={tech}
               variants={scaleIn}
               whileHover={{ scale: 1.08, y: -2 }}
-              style={{
-                background: theme.tagBg,
-                border: `1px solid ${theme.tagBorder}`,
-                color: theme.textSub,
-              }}
+              style={{ background: theme.tagBg, border: `1px solid ${theme.tagBorder}`, color: theme.textSub }}
               className="px-3 py-1.5 rounded-full text-xs font-mono transition-all duration-200 cursor-default hover:opacity-80"
             >
               {tech}
@@ -1112,6 +1117,7 @@ function ProjectCard({ project, index }) {
   const { theme } = useTheme();
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-60px" });
+  const [hovered, setHovered] = useState(false);
 
   return (
     <motion.div
@@ -1119,45 +1125,74 @@ function ProjectCard({ project, index }) {
       initial={{ opacity: 0, y: 50 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.65, delay: index * 0.15, ease: [0.22, 1, 0.36, 1] }}
-      whileHover={{ y: -8 }}
+      whileHover={{ y: -10 }}
+      onHoverStart={() => setHovered(true)}
+      onHoverEnd={() => setHovered(false)}
       style={{
-        background: theme.surface,
-        border: `1px solid ${theme.border}`,
+        background: hovered ? theme.surfaceHover : theme.surface,
+        border: `1px solid ${hovered ? theme.borderHover : theme.border}`,
+        boxShadow: hovered ? `0 0 0 1px ${theme.accent}22, 0 20px 60px ${theme.accent}18` : "0 4px 20px rgba(0,0,0,0.2)",
+        transition: "box-shadow 0.35s ease, border-color 0.35s ease, background 0.35s ease",
       }}
-      className="group relative rounded-2xl transition-all duration-400 shadow-xl hover:shadow-2xl cursor-default"
+      className="group relative rounded-2xl cursor-default overflow-hidden"
     >
+      {/* Glow strip at top on hover */}
+      <motion.div
+        className="absolute inset-x-0 top-0 h-[2px]"
+        style={{ background: theme.accentGrad }}
+        initial={{ scaleX: 0, opacity: 0 }}
+        animate={{ scaleX: hovered ? 1 : 0, opacity: hovered ? 1 : 0 }}
+        transition={{ duration: 0.3, ease: "easeOut" }}
+      />
+
       <div className="rounded-[15px] p-7 h-full flex flex-col">
         <div className="flex items-start justify-between mb-5">
-          <div className="text-4xl leading-none">{project.icon}</div>
-          <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-            {[{ Icon: Github, href: project.github }, { Icon: ExternalLink, href: project.link }].map(({ Icon, href }) => (
-              <motion.a
-                key={href}
-                href={href}
-                whileHover={{ scale: 1.15 }}
-                style={{ background: theme.surface, border: `1px solid ${theme.border}`, color: theme.textSub }}
-                className="w-8 h-8 rounded-lg flex items-center justify-center hover:opacity-80 transition"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <Icon size={14} />
-              </motion.a>
-            ))}
-          </div>
+          <motion.div
+            className="text-4xl leading-none"
+            animate={{ scale: hovered ? 1.12 : 1 }}
+            transition={{ duration: 0.25 }}
+          >
+            {project.icon}
+          </motion.div>
+          <motion.a
+            href={project.link}
+            target="_blank"
+            rel="noopener noreferrer"
+            whileHover={{ scale: 1.15 }}
+            style={{
+              background: theme.accentGrad,
+              color: "#fff",
+              boxShadow: `0 4px 14px ${theme.buttonPrimaryShadow}`,
+            }}
+            className="w-10 h-10 rounded-xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <ExternalLink size={18} />
+          </motion.a>
         </div>
 
-        <h3 className="text-xl font-bold mb-1 leading-snug" style={{ fontFamily: "'Syne', sans-serif", color: theme.text }}>
+        <h3
+          className="text-xl font-bold mb-1 leading-snug transition-colors duration-200"
+          style={{
+            fontFamily: "'Syne', sans-serif",
+            color: hovered ? theme.accentText : theme.text,
+          }}
+        >
           {project.title}
         </h3>
         <p className="text-xs font-mono mb-4" style={{ color: theme.textMuted }}>{project.tagline}</p>
-        <p className="text-sm leading-relaxed mb-6 flex-1" style={{ color: theme.textSub }}>
-          {project.description}
-        </p>
+        <p className="text-sm leading-relaxed mb-6 flex-1" style={{ color: theme.textSub }}>{project.description}</p>
 
         <div className="flex flex-wrap gap-2 mt-auto">
           {project.tech.map((t) => (
             <span
               key={t}
-              style={{ background: theme.tagBg, border: `1px solid ${theme.tagBorder}`, color: theme.textSub }}
+              style={{
+                background: hovered ? theme.tagHoverBg : theme.tagBg,
+                border: `1px solid ${hovered ? theme.tagHoverBorder : theme.tagBorder}`,
+                color: hovered ? theme.tagHoverText : theme.textSub,
+                transition: "all 0.25s ease",
+              }}
               className="px-2.5 py-1 rounded-md text-[11px] font-mono"
             >
               {t}
@@ -1190,8 +1225,7 @@ function Projects() {
             <GradientText gradient={theme.heroGradText}>Proud Of</GradientText>
           </SectionHeading>
           <motion.p variants={fadeUp} className="text-lg max-w-xl mx-auto" style={{ color: theme.textSub }}>
-            From AI research prototypes to production-ready web platforms — each project
-            represents a challenge solved with intention.
+            From AI research prototypes to production-ready web platforms — each project represents a challenge solved with intention.
           </motion.p>
         </motion.div>
 
@@ -1207,17 +1241,18 @@ function Projects() {
           transition={{ delay: 0.6, duration: 0.5 }}
           className="text-center mt-12"
         >
-          <a
+          <motion.a
             href="https://github.com/Satjot05"
             target="_blank"
             rel="noopener noreferrer"
+            whileHover={{ y: -2, color: theme.accentText }}
             style={{ color: theme.textSub }}
-            className="inline-flex items-center gap-2 text-sm font-medium transition-colors duration-200 group hover:opacity-80"
+            className="inline-flex items-center gap-2 text-sm font-medium transition-all duration-200 group"
           >
             <Github size={16} />
             See all projects on GitHub
             <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
-          </a>
+          </motion.a>
         </motion.div>
       </div>
     </section>
@@ -1225,14 +1260,16 @@ function Projects() {
 }
 
 // ─────────────────────────────────────────────────────────────────────
-// CONTACT
+// CONTACT  —  EmailJS powered
 // ─────────────────────────────────────────────────────────────────────
 
 function Contact() {
   const { theme } = useTheme();
   const [ref, isInView] = useScrollReveal();
+  const formRef = useRef(null);
   const [formData, setFormData] = useState({ name: "", email: "", message: "" });
-  const [status, setStatus] = useState("idle");
+  const [status, setStatus] = useState("idle"); // "idle" | "sending" | "sent" | "error"
+  const [errorMsg, setErrorMsg] = useState("");
 
   const handleChange = (e) =>
     setFormData((p) => ({ ...p, [e.target.name]: e.target.value }));
@@ -1240,10 +1277,31 @@ function Contact() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setStatus("sending");
-    await new Promise((r) => setTimeout(r, 1600));
-    setStatus("sent");
-    setFormData({ name: "", email: "", message: "" });
-    setTimeout(() => setStatus("idle"), 4000);
+    setErrorMsg("");
+
+    try {
+      await emailjs.send(
+        EMAILJS_SERVICE_ID,
+        EMAILJS_TEMPLATE_ID,
+        {
+          from_name: formData.name,
+          from_email: formData.email,
+          message: formData.message,
+          to_name: "Satjot",
+          reply_to: formData.email,
+        },
+        EMAILJS_PUBLIC_KEY
+      );
+
+      setStatus("sent");
+      setFormData({ name: "", email: "", message: "" });
+      setTimeout(() => setStatus("idle"), 5000);
+    } catch (err) {
+      console.error("EmailJS error:", err);
+      setErrorMsg("Failed to send. Please try again or email me directly.");
+      setStatus("error");
+      setTimeout(() => setStatus("idle"), 5000);
+    }
   };
 
   const socials = [
@@ -1281,7 +1339,9 @@ function Contact() {
         </motion.div>
 
         <div className="grid md:grid-cols-2 gap-10">
+          {/* ── Form ── */}
           <motion.form
+            ref={formRef}
             initial={{ opacity: 0, x: -30 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.65, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
@@ -1305,6 +1365,7 @@ function Contact() {
                 />
               </div>
             ))}
+
             <div>
               <label className="block text-xs font-mono uppercase tracking-widest mb-1.5" style={{ color: theme.textMuted }}>
                 Message
@@ -1321,10 +1382,27 @@ function Contact() {
               />
             </div>
 
+            {/* Error banner */}
+            <AnimatePresence>
+              {status === "error" && (
+                <motion.div
+                  initial={{ opacity: 0, y: -6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -6 }}
+                  style={{ background: "rgba(239,68,68,0.12)", border: "1px solid rgba(239,68,68,0.30)", color: "#f87171" }}
+                  className="px-4 py-3 rounded-xl text-sm flex items-center gap-2"
+                >
+                  <AlertCircle size={14} />
+                  {errorMsg}
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Submit button */}
             <motion.button
               type="submit"
               disabled={status === "sending" || status === "sent"}
-              whileHover={{ scale: status === "idle" ? 1.02 : 1 }}
+              whileHover={{ scale: status === "idle" ? 1.02 : 1, boxShadow: status === "idle" ? `0 10px 30px ${theme.buttonPrimaryShadow}` : "none" }}
               whileTap={{ scale: 0.98 }}
               style={
                 status === "sent"
@@ -1348,6 +1426,7 @@ function Contact() {
             </motion.button>
           </motion.form>
 
+          {/* ── Right column ── */}
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
@@ -1382,9 +1461,11 @@ function Contact() {
                     href={href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    whileHover={{ x: 4 }}
+                    whileHover={{ x: 4, borderColor: theme.accentText + "55", boxShadow: `0 4px 20px ${theme.accent}18` }}
                     style={{ background: theme.surface, border: `1px solid ${theme.border}`, color: theme.textSub }}
-                    className="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group hover:opacity-80"
+                    onMouseEnter={e => { e.currentTarget.style.color = theme.accentText; e.currentTarget.style.background = theme.sectionBadgeBg; }}
+                    onMouseLeave={e => { e.currentTarget.style.color = theme.textSub; e.currentTarget.style.background = theme.surface; }}
+                    className="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group"
                   >
                     <Icon size={16} />
                     <span className="text-sm font-medium">{label}</span>
