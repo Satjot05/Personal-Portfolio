@@ -76,25 +76,25 @@ The portfolio includes an in-memory theme context system providing instant trans
 
 ## 🚀 Featured Projects
 
-The portfolio showcases key engineering work across deep learning and full-stack software:
+The portfolio showcases key engineering work across deep learning, large language models, and full-stack software:
 
-### 1. [Visual Search Engine Using VLM](https://github.com/Satjot05/Visual-Search-Engine-Using-VLM)
-> **Multimodal AI & Vector Search**
-> - **Tech**: Python, CLIP, FastAPI, React, FAISS, MongoDB
-> - Semantic visual search engine leveraging Vision Language Models (VLMs) to retrieve images based on complex natural language queries.
-> - Computes multimodal vector embeddings and performs sub-millisecond similarity lookups using FAISS indexing.
+### 1. [VidMind](https://github.com/Satjot05/Vidmind)
+> **LLM-Powered Video Intelligence, Notes & Quiz Generator**
+> - **Tech**: React 18, Python (Flask), Meta LLaMA 3.3 70B (Groq API), Vite, YouTube Transcript API
+> - Full-stack AI application that ingests any YouTube video URL and generates detailed 400–500 word summaries, structured study notes, interactive 10-question quizzes with scoring and explanations, and visual mind maps.
+> - Features automated model rotation across rate limits, multi-strategy caption extraction, and styled PDF downloads.
 
-### 2. [Bus Management & Transit Dashboard](https://github.com/Satjot05/Bus-Attendance-System)
-> **MERN Stack Fleet Operations Platform**
-> - **Tech**: MongoDB, Express.js, React, Node.js, Socket.io, Leaflet
-> - Full-stack campus transit admin dashboard with real-time bus tracking and driver dispatching.
-> - Includes student attendance records, interactive mapping with Leaflet, and automated arrival alerts.
+### 2. [X-Ray Image Classifier](https://github.com/Satjot05/X-Ray-Image-Classifier)
+> **Deep Learning Diagnostic Triage for Pediatric Chest Radiographs**
+> - **Tech**: Python, PyTorch, Convolutional Neural Networks (CNN), Deep Learning, OpenCV
+> - AI-assisted medical diagnostic triage system trained to evaluate pediatric chest X-rays and classify scans as `NORMAL` or `PNEUMONIA`.
+> - Demonstrates clinical screening automation with medical image preprocessing, feature extraction, and prediction confidence scoring.
 
-### 3. [DocuFlow](https://github.com/Satjot05/DocuFlow)
-> **Intelligent Document Processing & Workflow Automation**
-> - **Tech**: React, Node.js, Express, MongoDB, Tesseract.js OCR, Framer Motion
-> - Automated document pipeline that extracts, parses, and classifies invoices and contracts using OCR and NLP.
-> - Configurable business logic triggers automated routing, drastically decreasing human document processing time.
+### 3. [Bus Attendance System](https://github.com/Satjot05/Bus-Attendance-System)
+> **Automated Campus Transit Logistics & Student Attendance Tracking**
+> - **Tech**: React, Node.js, Express.js, MongoDB (MERN Stack), REST APIs, Tailwind CSS
+> - Full-stack web platform built to automate college bus transportation logistics and student boarding verification.
+> - Replaces error-prone paper rosters with digital check-in records, route management, driver assignment, and transport administration controls.
 
 ---
 
