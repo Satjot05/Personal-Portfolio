@@ -411,31 +411,31 @@ const SKILLS_DATA = [
 
 const PROJECTS_DATA = [
   {
-    title: "Visual Search Engine",
-    tagline: "VLM-powered semantic image search & understanding",
+    title: "VidMind",
+    tagline: "LLM-powered video intelligence, notes & quiz generator",
     description:
-      "Built a semantic visual search engine leveraging Vision Language Models (VLMs) to understand and retrieve images based on natural language queries. The system encodes images into rich multimodal embeddings, enabling context-aware search far beyond traditional keyword or tag-based approaches.",
-    tech: ["Python", "CLIP", "FastAPI", "React", "FAISS", "MongoDB"],
-    icon: "🔍",
-    link: "https://github.com/Satjot05/Visual-Search-Engine-Using-VLM",
+      "A full-stack AI web application that transforms any YouTube video into structured study notes, comprehensive summaries, interactive 10-question quizzes with scoring, and visual mind maps using Meta's LLaMA 3.3 70B via Groq API. Features caption extraction, model rotation, and styled PDF export.",
+    tech: ["React", "Python Flask", "Groq API", "LLaMA 3.3", "Vite", "YouTube API"],
+    icon: "⚡",
+    link: "https://github.com/Satjot05/Vidmind",
   },
   {
-    title: "Bus Management Dashboard",
-    tagline: "Fleet tracking & operations for campus transit",
+    title: "X-Ray Image Classifier",
+    tagline: "Deep learning diagnostic triage for pediatric chest radiographs",
     description:
-      "A full-featured MERN-stack admin dashboard for managing college bus fleets. Supports real-time location tracking via socket.io, CRUD operations on bus records, route management, driver assignment, and automated schedule notifications for students.",
-    tech: ["MongoDB", "Express.js", "React", "Node.js", "Socket.io", "Leaflet"],
+      "An AI-assisted clinical diagnostic triage system trained to evaluate pediatric chest X-rays and classify scans as NORMAL or PNEUMONIA. Utilizes convolutional neural networks (CNNs) with image preprocessing, evaluation metrics, and confidence scoring to streamline medical workflows.",
+    tech: ["Python", "PyTorch", "CNN", "Deep Learning", "Computer Vision", "OpenCV"],
+    icon: "🩻",
+    link: "https://github.com/Satjot05/X-Ray-Image-Classifier",
+  },
+  {
+    title: "Bus Attendance System",
+    tagline: "Automated campus transit logistics & student attendance tracking",
+    description:
+      "A full-stack web application designed to digitize and automate college bus logistics and student attendance tracking. Replaces manual paper rosters with real-time boarding verification, route management, driver assignment, and transport administration controls.",
+    tech: ["React", "Node.js", "Express.js", "MongoDB", "REST APIs", "Tailwind CSS"],
     icon: "🚌",
     link: "https://github.com/Satjot05/Bus-Attendance-System",
-  },
-  {
-    title: "DocuFlow",
-    tagline: "Intelligent document processing & workflow automation",
-    description:
-      "A smart document management platform that automates extraction, classification, and routing of business documents. Uses OCR and NLP to parse invoices, contracts, and forms, then triggers configurable workflows — reducing manual processing time and human error significantly.",
-    tech: ["React", "Node.js", "Tesseract.js", "MongoDB", "Express", "Framer Motion"],
-    icon: "📄",
-    link: "https://github.com/Satjot05/DocuFlow",
   },
 ];
 
@@ -1307,7 +1307,7 @@ function Contact() {
   const socials = [
     { icon: Github, label: "GitHub", href: "https://github.com/Satjot05" },
     { icon: Linkedin, label: "LinkedIn", href: "https://www.linkedin.com/in/satjot-singh-saini/" },
-    { icon: Mail, label: "Email", href: "mailto:hello@example.com" },
+    { icon: Mail, label: "Email", href: "mailto:sainisatjot005@gmail.com" },
   ];
 
   const inputStyle = {
