@@ -21,8 +21,8 @@ import {
 //      {{message}}     — their message
 //      {{to_name}}     — your name (set as "Satjot" in template or here)
 // 4. Go to Account → API Keys  →  copy your Public Key below
-const EMAILJS_SERVICE_ID  = "service_yqxp5j5";   // e.g. "service_abc123"
-const EMAILJS_TEMPLATE_ID = "template_84vvz2d";  // e.g. "template_xyz789"
+const EMAILJS_SERVICE_ID  = "service_yupgmo8";   // e.g. "service_abc123"
+const EMAILJS_TEMPLATE_ID = "template_c3sai33";  // e.g. "template_xyz789"
 const EMAILJS_PUBLIC_KEY  = "ixm9z_BpjWhmowhgX";   // e.g. "AbCdEfGhIjKlMnOp"
 
 // ─────────────────────────────────────────────────────────────────────
