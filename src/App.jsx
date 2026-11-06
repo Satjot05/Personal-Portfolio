@@ -800,7 +800,7 @@ function Hero() {
           className="text-lg max-w-xl mx-auto leading-relaxed mb-10"
           style={{ color: theme.textSub }}
         >
-          3rd-year B.Tech CSE student passionate about crafting intelligent systems
+          4th-year B.Tech CSE student passionate about crafting intelligent systems
           — from neural networks to production-grade web applications.
         </motion.p>
 
@@ -905,7 +905,7 @@ function About() {
               </SectionHeading>
 
               <motion.p variants={fadeUp} className="text-lg leading-relaxed mb-5" style={{ color: theme.textSub }}>
-                I'm a 3rd-year B.Tech Computer Science student specializing in{" "}
+                I'm a 4th-year B.Tech Computer Science student specializing in{" "}
                 <span className="font-medium" style={{ color: theme.accentText }}>AI & Machine Learning</span>,
                 with a strong command of full-stack web development.
               </motion.p>
@@ -968,7 +968,7 @@ function About() {
                   <span style={{ color: "#4ade80" }}>"Satjot Singh Saini"</span>
                   {`\n`}
                   {"  "}<span style={{ color: theme.textMuted }}>year</span> ={" "}
-                  <span style={{ color: "#fb923c" }}>3</span>
+                  <span style={{ color: "#fb923c" }}>4</span>
                   {`\n`}
                   {"  "}<span style={{ color: theme.textMuted }}>focus</span> ={" "}
                   <span style={{ color: "#4ade80" }}>["AI", "ML", "MERN"]</span>
