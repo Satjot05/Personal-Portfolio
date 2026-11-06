@@ -1,7 +1,7 @@
 /**
  * ============================================================
  *  AI/ML Full-Stack Developer Portfolio
- *  B.Tech CSE — 3rd Year
+ *  B.Tech CSE — 4th Year
  * ============================================================
  *
  *  FOLDER STRUCTURE (for a real React + Tailwind + Framer Motion project):
@@ -475,7 +475,7 @@ function Hero() {
           transition={{ delay: 0.7, duration: 0.6 }}
           className="text-slate-400 text-lg max-w-xl mx-auto leading-relaxed mb-10"
         >
-          3rd-year B.Tech CSE student passionate about crafting intelligent systems
+          4th-year B.Tech CSE student passionate about crafting intelligent systems
           — from neural networks to production-grade web applications.
         </motion.p>
 
@@ -594,7 +594,7 @@ function About() {
               </SectionHeading>
 
               <motion.p variants={fadeUp} className="text-slate-400 text-lg leading-relaxed mb-5">
-                I'm a 3rd-year B.Tech Computer Science student specializing in{" "}
+                I'm a 4th-year B.Tech Computer Science student specializing in{" "}
                 <span className="text-violet-300 font-medium">AI & Machine Learning</span>,
                 with a strong command of full-stack web development.
               </motion.p>
@@ -659,7 +659,7 @@ function About() {
                   {`\n`}
                   {"  "}
                   <span className="text-slate-500">year</span> ={" "}
-                  <span className="text-orange-300">3</span>
+                  <span className="text-orange-300">4</span>
                   {`\n`}
                   {"  "}
                   <span className="text-slate-500">focus</span> ={" "}
