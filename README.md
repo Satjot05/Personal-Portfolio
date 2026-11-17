@@ -104,7 +104,7 @@ The portfolio showcases key engineering work across deep learning, large languag
 Personal-Portfolio/
 ├── public/
 │   ├── favicon.svg                     # Custom SVG browser favicon
-│   └── Satjot-Trident-Resume.docx      # Downloadable resume document
+│   └── Satjot_Singh_Resume.docx        # Downloadable resume document
 ├── src/
 │   ├── App.jsx                         # Main application layout, theme state, and sections
 │   ├── main.jsx                        # React root entry point
