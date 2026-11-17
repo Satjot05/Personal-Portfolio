@@ -1,1572 +1,262 @@
-import { useState, useEffect, useRef, createContext, useContext } from "react";
-import { motion, useInView, useScroll, useTransform, AnimatePresence } from "framer-motion";
-import emailjs from "@emailjs/browser";
-import {
-  Brain, Code2, Database, Globe, Github, Linkedin,
-  Mail, User, Send, ExternalLink, Menu, X,
-  ChevronDown, Cpu, Layers, Network, ArrowRight,
-  Sparkles, Terminal, Zap, Award, BookOpen, Coffee,
-  MailCheck, Palette, Check, AlertCircle
-} from "lucide-react";
+# ⚡ Satjot Singh Saini — Personal Portfolio
 
-// ─────────────────────────────────────────────────────────────────────
-// EMAILJS CONFIG  ← fill these in after setting up EmailJS
-// ─────────────────────────────────────────────────────────────────────
-// 1. Sign up free at https://www.emailjs.com
-// 2. Add a Gmail service  →  copy the Service ID below
-// 3. Create an Email Template  →  copy the Template ID below
-//    Template variables to use in your template:
-//      {{from_name}}   — sender's name
-//      {{from_email}}  — sender's email
-//      {{message}}     — their message
-//      {{to_name}}     — your name (set as "Satjot" in template or here)
-// 4. Go to Account → API Keys  →  copy your Public Key below
-const EMAILJS_SERVICE_ID  = "service_yupgmo8";   // e.g. "service_abc123"
-const EMAILJS_TEMPLATE_ID = "template_c3sai33";  // e.g. "template_xyz789"
-const EMAILJS_PUBLIC_KEY  = "ixm9z_BpjWhmowhgX";   // e.g. "AbCdEfGhIjKlMnOp"
+<div align="center">
 
-// ─────────────────────────────────────────────────────────────────────
-// THEMES
-// ─────────────────────────────────────────────────────────────────────
+![Portfolio Banner](https://img.shields.io/badge/Status-Live%20%26%20Active-success?style=for-the-badge&logo=vercel&logoColor=white)
+![React](https://img.shields.io/badge/React-18.3.1-61DAFB?style=for-the-badge&logo=react&logoColor=black)
+![Vite](https://img.shields.io/badge/Vite-7.3.1-646CFF?style=for-the-badge&logo=vite&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4.3-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![Framer Motion](https://img.shields.io/badge/Framer_Motion-11.0.0-black?style=for-the-badge&logo=framer&logoColor=white)
+![EmailJS](https://img.shields.io/badge/EmailJS-4.4.1-FF7A00?style=for-the-badge&logo=mailgun&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)
 
-const THEMES = {
-  midnight: {
-    id: "midnight",
-    name: "Midnight",
-    preview: ["#7c3aed", "#030712", "#0e7490"],
-    bg: "#030712",
-    bgGradient: `radial-gradient(ellipse 80% 60% at 50% -10%, rgba(109,40,217,0.08) 0%, transparent 60%),
-                 radial-gradient(ellipse 60% 40% at 80% 80%, rgba(6,182,212,0.05) 0%, transparent 55%)`,
-    navBg: "rgba(3,7,18,0.80)",
-    surface: "rgba(255,255,255,0.03)",
-    surfaceHover: "rgba(255,255,255,0.06)",
-    border: "rgba(255,255,255,0.08)",
-    borderHover: "rgba(255,255,255,0.15)",
-    text: "#f8fafc",
-    textSub: "#94a3b8",
-    textMuted: "#475569",
-    accent: "#8b5cf6",
-    accentGrad: "linear-gradient(135deg, #7c3aed, #9333ea)",
-    accentText: "#a78bfa",
-    accentGradText: "linear-gradient(90deg, #a78bfa, #818cf8, #67e8f9)",
-    heroGradText: "linear-gradient(90deg, #a78bfa, #c084fc, #67e8f9)",
-    progressBar: "linear-gradient(90deg, #7c3aed, #9333ea, #06b6d4)",
-    skillBar: "linear-gradient(90deg, #7c3aed, #06b6d4)",
-    sectionBadgeBg: "rgba(139,92,246,0.10)",
-    sectionBadgeBorder: "rgba(139,92,246,0.20)",
-    sectionBadgeText: "#a78bfa",
-    sectionLine: "linear-gradient(90deg, #7c3aed, transparent)",
-    codeBlock: "#0d1117",
-    scrollbar: "#3b0764",
-    gridColor: "rgba(139,92,246,0.5)",
-    blob1: "rgba(109,40,217,0.10)",
-    blob2: "rgba(6,182,212,0.08)",
-    blob3: "rgba(147,51,234,0.08)",
-    particleColor: "rgba(167,139,250,0.40)",
-    terminalColor: "#a78bfa",
-    availableDot: "#34d399",
-    availableText: "#34d399",
-    availableCard: "linear-gradient(135deg, rgba(124,58,237,0.10), rgba(147,51,234,0.05))",
-    availableCardBorder: "rgba(139,92,246,0.20)",
-    footerBorder: "rgba(255,255,255,0.05)",
-    statValue: "#ffffff",
-    tagBg: "rgba(255,255,255,0.04)",
-    tagBorder: "rgba(255,255,255,0.08)",
-    tagHoverBorder: "rgba(139,92,246,0.30)",
-    tagHoverBg: "rgba(139,92,246,0.05)",
-    tagHoverText: "#a78bfa",
-    buttonPrimary: "linear-gradient(135deg, #7c3aed, #9333ea)",
-    buttonPrimaryHover: "linear-gradient(135deg, #6d28d9, #7c3aed)",
-    buttonPrimaryShadow: "rgba(139,92,246,0.30)",
-    buttonSecBg: "rgba(255,255,255,0.05)",
-    buttonSecBorder: "rgba(255,255,255,0.10)",
-    inputBg: "rgba(255,255,255,0.03)",
-    inputBorder: "rgba(255,255,255,0.08)",
-    inputFocusBorder: "rgba(139,92,246,0.60)",
-    sentBg: "rgba(5,150,105,0.20)",
-    sentBorder: "rgba(16,185,129,0.30)",
-    sentText: "#34d399",
-    skill1: { from: "#7c3aed", to: "#9333ea", icon: "#ffffff" },
-    skill2: { from: "#0891b2", to: "#2563eb", icon: "#ffffff" },
-    skill3: { from: "#059669", to: "#0d9488", icon: "#ffffff" },
-  },
+<p align="center">
+  <strong>A modern, high-performance developer portfolio built with React, Vite, Tailwind CSS, and Framer Motion.</strong>
+  <br />
+  Featuring 4 dynamic color themes, smooth scroll-triggered animations, interactive particle meshes, and direct EmailJS integration.
+</p>
 
-  cyber: {
-    id: "cyber",
-    name: "Cyber",
-    preview: ["#00fff0", "#0a0a1a", "#ff00aa"],
-    bg: "#060610",
-    bgGradient: `radial-gradient(ellipse 80% 60% at 50% -10%, rgba(0,255,200,0.06) 0%, transparent 60%),
-                 radial-gradient(ellipse 60% 40% at 90% 80%, rgba(255,0,170,0.05) 0%, transparent 55%)`,
-    navBg: "rgba(6,6,16,0.85)",
-    surface: "rgba(0,255,200,0.02)",
-    surfaceHover: "rgba(0,255,200,0.05)",
-    border: "rgba(0,255,200,0.10)",
-    borderHover: "rgba(0,255,200,0.25)",
-    text: "#e0fff8",
-    textSub: "#7ecfbf",
-    textMuted: "#3a7a70",
-    accent: "#00d4aa",
-    accentGrad: "linear-gradient(135deg, #00d4aa, #ff00aa)",
-    accentText: "#00fff0",
-    accentGradText: "linear-gradient(90deg, #00fff0, #00d4aa, #ff00aa)",
-    heroGradText: "linear-gradient(90deg, #00fff0, #00d4aa, #ff44bb)",
-    progressBar: "linear-gradient(90deg, #00d4aa, #00fff0, #ff00aa)",
-    skillBar: "linear-gradient(90deg, #00d4aa, #00fff0)",
-    sectionBadgeBg: "rgba(0,255,200,0.07)",
-    sectionBadgeBorder: "rgba(0,255,200,0.20)",
-    sectionBadgeText: "#00fff0",
-    sectionLine: "linear-gradient(90deg, #00d4aa, transparent)",
-    codeBlock: "#030811",
-    scrollbar: "#004d3d",
-    gridColor: "rgba(0,255,200,0.3)",
-    blob1: "rgba(0,212,170,0.08)",
-    blob2: "rgba(255,0,170,0.06)",
-    blob3: "rgba(0,255,240,0.06)",
-    particleColor: "rgba(0,255,200,0.50)",
-    terminalColor: "#00fff0",
-    availableDot: "#00fff0",
-    availableText: "#00fff0",
-    availableCard: "linear-gradient(135deg, rgba(0,212,170,0.08), rgba(0,255,200,0.03))",
-    availableCardBorder: "rgba(0,255,200,0.20)",
-    footerBorder: "rgba(0,255,200,0.05)",
-    statValue: "#e0fff8",
-    tagBg: "rgba(0,255,200,0.03)",
-    tagBorder: "rgba(0,255,200,0.10)",
-    tagHoverBorder: "rgba(0,255,200,0.30)",
-    tagHoverBg: "rgba(0,255,200,0.06)",
-    tagHoverText: "#00fff0",
-    buttonPrimary: "linear-gradient(135deg, #00d4aa, #009980)",
-    buttonPrimaryHover: "linear-gradient(135deg, #00fff0, #00d4aa)",
-    buttonPrimaryShadow: "rgba(0,212,170,0.30)",
-    buttonSecBg: "rgba(0,255,200,0.04)",
-    buttonSecBorder: "rgba(0,255,200,0.12)",
-    inputBg: "rgba(0,255,200,0.02)",
-    inputBorder: "rgba(0,255,200,0.10)",
-    inputFocusBorder: "rgba(0,255,200,0.50)",
-    sentBg: "rgba(0,212,170,0.15)",
-    sentBorder: "rgba(0,255,200,0.25)",
-    sentText: "#00fff0",
-    skill1: { from: "#00d4aa", to: "#009980", icon: "#ffffff" },
-    skill2: { from: "#ff00aa", to: "#cc0088", icon: "#ffffff" },
-    skill3: { from: "#0044cc", to: "#0066ff", icon: "#ffffff" },
-  },
+[Explore Projects](#-featured-projects) • [Live Demo](#-live-preview) • [Theme Engine](#-dynamic-theme-system) • [Quick Start](#-getting-started) • [Customization](#-customization-guide)
 
-  ember: {
-    id: "ember",
-    name: "Ember",
-    preview: ["#f97316", "#0f0a05", "#ef4444"],
-    bg: "#0c0805",
-    bgGradient: `radial-gradient(ellipse 80% 60% at 50% -10%, rgba(249,115,22,0.08) 0%, transparent 60%),
-                 radial-gradient(ellipse 60% 40% at 80% 80%, rgba(239,68,68,0.05) 0%, transparent 55%)`,
-    navBg: "rgba(12,8,5,0.85)",
-    surface: "rgba(249,115,22,0.03)",
-    surfaceHover: "rgba(249,115,22,0.06)",
-    border: "rgba(249,115,22,0.10)",
-    borderHover: "rgba(249,115,22,0.25)",
-    text: "#fff7ed",
-    textSub: "#c4a07a",
-    textMuted: "#78500a",
-    accent: "#f97316",
-    accentGrad: "linear-gradient(135deg, #f97316, #ef4444)",
-    accentText: "#fb923c",
-    accentGradText: "linear-gradient(90deg, #fb923c, #f43f5e, #fbbf24)",
-    heroGradText: "linear-gradient(90deg, #fb923c, #ef4444, #fbbf24)",
-    progressBar: "linear-gradient(90deg, #f97316, #ef4444, #fbbf24)",
-    skillBar: "linear-gradient(90deg, #f97316, #ef4444)",
-    sectionBadgeBg: "rgba(249,115,22,0.08)",
-    sectionBadgeBorder: "rgba(249,115,22,0.20)",
-    sectionBadgeText: "#fb923c",
-    sectionLine: "linear-gradient(90deg, #f97316, transparent)",
-    codeBlock: "#0a0604",
-    scrollbar: "#7c2d12",
-    gridColor: "rgba(249,115,22,0.4)",
-    blob1: "rgba(249,115,22,0.10)",
-    blob2: "rgba(239,68,68,0.08)",
-    blob3: "rgba(251,191,36,0.06)",
-    particleColor: "rgba(251,146,60,0.50)",
-    terminalColor: "#fb923c",
-    availableDot: "#4ade80",
-    availableText: "#4ade80",
-    availableCard: "linear-gradient(135deg, rgba(249,115,22,0.10), rgba(239,68,68,0.05))",
-    availableCardBorder: "rgba(249,115,22,0.20)",
-    footerBorder: "rgba(249,115,22,0.06)",
-    statValue: "#fff7ed",
-    tagBg: "rgba(249,115,22,0.03)",
-    tagBorder: "rgba(249,115,22,0.10)",
-    tagHoverBorder: "rgba(249,115,22,0.30)",
-    tagHoverBg: "rgba(249,115,22,0.06)",
-    tagHoverText: "#fb923c",
-    buttonPrimary: "linear-gradient(135deg, #f97316, #ef4444)",
-    buttonPrimaryHover: "linear-gradient(135deg, #ea6a0a, #dc2626)",
-    buttonPrimaryShadow: "rgba(249,115,22,0.30)",
-    buttonSecBg: "rgba(249,115,22,0.05)",
-    buttonSecBorder: "rgba(249,115,22,0.12)",
-    inputBg: "rgba(249,115,22,0.02)",
-    inputBorder: "rgba(249,115,22,0.10)",
-    inputFocusBorder: "rgba(249,115,22,0.50)",
-    sentBg: "rgba(74,222,128,0.12)",
-    sentBorder: "rgba(74,222,128,0.25)",
-    sentText: "#4ade80",
-    skill1: { from: "#f97316", to: "#ef4444", icon: "#ffffff" },
-    skill2: { from: "#fbbf24", to: "#f59e0b", icon: "#1a1a1a" },
-    skill3: { from: "#dc2626", to: "#b91c1c", icon: "#ffffff" },
-  },
+</div>
 
-  arctic: {
-    id: "arctic",
-    name: "Arctic",
-    preview: ["#3b82f6", "#f8fafc", "#06b6d4"],
-    bg: "#f8fafc",
-    bgGradient: `radial-gradient(ellipse 80% 60% at 50% -10%, rgba(59,130,246,0.07) 0%, transparent 60%),
-                 radial-gradient(ellipse 60% 40% at 80% 80%, rgba(6,182,212,0.05) 0%, transparent 55%)`,
-    navBg: "rgba(248,250,252,0.85)",
-    surface: "rgba(59,130,246,0.04)",
-    surfaceHover: "rgba(59,130,246,0.08)",
-    border: "rgba(59,130,246,0.12)",
-    borderHover: "rgba(59,130,246,0.30)",
-    text: "#0f172a",
-    textSub: "#475569",
-    textMuted: "#94a3b8",
-    accent: "#3b82f6",
-    accentGrad: "linear-gradient(135deg, #3b82f6, #06b6d4)",
-    accentText: "#2563eb",
-    accentGradText: "linear-gradient(90deg, #2563eb, #0891b2, #0e7490)",
-    heroGradText: "linear-gradient(90deg, #3b82f6, #06b6d4, #2563eb)",
-    progressBar: "linear-gradient(90deg, #3b82f6, #0891b2, #06b6d4)",
-    skillBar: "linear-gradient(90deg, #3b82f6, #06b6d4)",
-    sectionBadgeBg: "rgba(59,130,246,0.08)",
-    sectionBadgeBorder: "rgba(59,130,246,0.20)",
-    sectionBadgeText: "#2563eb",
-    sectionLine: "linear-gradient(90deg, #3b82f6, transparent)",
-    codeBlock: "#f1f5f9",
-    scrollbar: "#bfdbfe",
-    gridColor: "rgba(59,130,246,0.2)",
-    blob1: "rgba(59,130,246,0.07)",
-    blob2: "rgba(6,182,212,0.06)",
-    blob3: "rgba(99,102,241,0.05)",
-    particleColor: "rgba(59,130,246,0.40)",
-    terminalColor: "#2563eb",
-    availableDot: "#16a34a",
-    availableText: "#16a34a",
-    availableCard: "linear-gradient(135deg, rgba(59,130,246,0.08), rgba(6,182,212,0.04))",
-    availableCardBorder: "rgba(59,130,246,0.20)",
-    footerBorder: "rgba(59,130,246,0.08)",
-    statValue: "#0f172a",
-    tagBg: "rgba(59,130,246,0.04)",
-    tagBorder: "rgba(59,130,246,0.12)",
-    tagHoverBorder: "rgba(59,130,246,0.30)",
-    tagHoverBg: "rgba(59,130,246,0.08)",
-    tagHoverText: "#2563eb",
-    buttonPrimary: "linear-gradient(135deg, #3b82f6, #0891b2)",
-    buttonPrimaryHover: "linear-gradient(135deg, #2563eb, #0284c7)",
-    buttonPrimaryShadow: "rgba(59,130,246,0.25)",
-    buttonSecBg: "rgba(59,130,246,0.06)",
-    buttonSecBorder: "rgba(59,130,246,0.15)",
-    inputBg: "rgba(59,130,246,0.03)",
-    inputBorder: "rgba(59,130,246,0.12)",
-    inputFocusBorder: "rgba(59,130,246,0.50)",
-    sentBg: "rgba(22,163,74,0.10)",
-    sentBorder: "rgba(22,163,74,0.25)",
-    sentText: "#16a34a",
-    skill1: { from: "#3b82f6", to: "#2563eb", icon: "#ffffff" },
-    skill2: { from: "#06b6d4", to: "#0891b2", icon: "#ffffff" },
-    skill3: { from: "#6366f1", to: "#4f46e5", icon: "#ffffff" },
-  },
-};
+---
 
-// ─────────────────────────────────────────────────────────────────────
-// THEME CONTEXT
-// ─────────────────────────────────────────────────────────────────────
+## 📖 Overview
 
-const ThemeContext = createContext(null);
-const useTheme = () => useContext(ThemeContext);
+This repository hosts the official personal portfolio of **Satjot Singh Saini**, an **AI/ML Engineer and Full-Stack Developer** (B.Tech Computer Science & Engineering specializing in AI & ML, 2023–2027).
 
-// ─────────────────────────────────────────────────────────────────────
-// THEME SWITCHER COMPONENT
-// ─────────────────────────────────────────────────────────────────────
+The portfolio is designed with a futuristic, clean developer aesthetic that balances high-impact visuals with optimal performance, accessibility, and responsiveness across all device viewports.
 
-function ThemeSwitcher() {
-  const { theme, setThemeId } = useTheme();
-  const [open, setOpen] = useState(false);
-  const ref = useRef(null);
+### ✨ Key Features
 
-  useEffect(() => {
-    const handleClick = (e) => {
-      if (ref.current && !ref.current.contains(e.target)) setOpen(false);
-    };
-    document.addEventListener("mousedown", handleClick);
-    return () => document.removeEventListener("mousedown", handleClick);
-  }, []);
+- 🎨 **Multi-Theme Engine**: Switch on the fly between 4 distinct visual themes (**Midnight**, **Cyber**, **Ember**, and **Arctic**) without page reloads or layout shift.
+- 🚀 **Buttery Framer Motion Animations**: Smooth section entrances, staggered cards, animated skill meters, and micro-interactions on buttons and project tiles.
+- ⌨️ **Real-Time Typewriter Hero**: Dynamic multi-role typing effect highlighting core competencies in AI, Machine Learning, and Full-Stack Development.
+- 🌌 **Generative Grid & Floating Particles**: Ambient canvas-free animated particles and radial background glow meshes.
+- 📬 **Serverless Contact Form**: Direct client-to-inbox messaging powered by **EmailJS** with live form validation, loading states, and status alerts.
+- 📱 **Fully Responsive & Accessible**: Mobile slide-out drawer navigation, auto-scroll spy navbar, and cross-browser consistency.
+- ⚡ **Blazing Fast Vite Tooling**: Sub-second Hot Module Replacement (HMR) and optimized static asset chunking.
+- 📄 **One-Click Resume Access**: Integrated resume download handler for prospective recruiters and collaborators.
 
-  return (
-    <div ref={ref} className="relative">
-      <motion.button
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        onClick={() => setOpen((o) => !o)}
-        style={{
-          background: theme.surface,
-          border: `1px solid ${theme.border}`,
-          color: theme.textSub,
-        }}
-        className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 hover:opacity-80"
-      >
-        <Palette size={14} style={{ color: theme.accentText }} />
-        <span style={{ color: theme.textSub }} className="text-xs hidden sm:inline">{theme.name}</span>
-        <div className="flex gap-0.5">
-          {theme.preview.map((c, i) => (
-            <div key={i} className="w-2 h-2 rounded-full" style={{ background: c }} />
-          ))}
-        </div>
-      </motion.button>
+---
 
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            initial={{ opacity: 0, y: 8, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 8, scale: 0.95 }}
-            transition={{ duration: 0.18 }}
-            style={{
-              background: theme.bg,
-              border: `1px solid ${theme.border}`,
-              boxShadow: `0 20px 40px rgba(0,0,0,0.3)`,
-            }}
-            className="absolute right-0 top-10 w-52 rounded-2xl p-2 z-[200]"
-          >
-            <p className="text-[10px] font-mono tracking-widest uppercase px-2 py-1.5 mb-1" style={{ color: theme.textMuted }}>
-              Choose Theme
-            </p>
-            {Object.values(THEMES).map((t) => (
-              <motion.button
-                key={t.id}
-                onClick={() => { setThemeId(t.id); setOpen(false); }}
-                whileHover={{ x: 3 }}
-                style={{
-                  background: theme.id === t.id ? theme.surface : "transparent",
-                  border: `1px solid ${theme.id === t.id ? theme.border : "transparent"}`,
-                  color: theme.id === t.id ? theme.text : theme.textSub,
-                }}
-                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150"
-              >
-                <div className="flex gap-1">
-                  {t.preview.map((c, i) => (
-                    <div key={i} className="w-3 h-3 rounded-full" style={{ background: c, boxShadow: `0 0 4px ${c}50` }} />
-                  ))}
-                </div>
-                <span className="flex-1 text-left">{t.name}</span>
-                {theme.id === t.id && <Check size={13} style={{ color: theme.accentText }} />}
-              </motion.button>
-            ))}
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  );
-}
+## 🎨 Dynamic Theme System
 
-// ─────────────────────────────────────────────────────────────────────
-// DATA LAYER
-// ─────────────────────────────────────────────────────────────────────
+The portfolio includes an in-memory theme context system providing instant transitions between 4 color schemes:
 
-const SKILLS_DATA = [
-  {
-    category: "AI & Machine Learning",
-    icon: Brain,
-    items: [
-      { name: "Natural Language Processing", level: 85 },
-      { name: "Deep Learning", level: 88 },
-      { name: "Convolutional Neural Networks", level: 82 },
-      { name: "K-Nearest Neighbours", level: 90 },
-      { name: "Artificial Neural Networks", level: 86 },
-    ],
-    skillKey: "skill1",
-  },
-  {
-    category: "Full Stack Development",
-    icon: Globe,
-    items: [
-      { name: "React.js", level: 92 },
-      { name: "Node.js & Express", level: 88 },
-      { name: "MongoDB", level: 85 },
-      { name: "PHP", level: 78 },
-      { name: "JavaScript (ES6+)", level: 93 },
-    ],
-    skillKey: "skill2",
-  },
-  {
-    category: "Core Computer Science",
-    icon: Cpu,
-    items: [
-      { name: "Data Structures", level: 91 },
-      { name: "Algorithms", level: 88 },
-      { name: "System Design", level: 76 },
-      { name: "Object-Oriented Programming", level: 90 },
-      { name: "Database Management", level: 84 },
-    ],
-    skillKey: "skill3",
-  },
-];
+| Theme | Preview | Vibe | Highlight Accents |
+| :--- | :---: | :--- | :--- |
+| **Midnight** *(Default)* | 🟣 ⬛ 🔵 | Deep space, modern developer dark mode | Violet (`#7c3aed`), Cyan (`#06b6d4`), Slate |
+| **Cyber** | 🟢 ⬛ 💖 | High-tech cyberpunk neon matrix | Neon Cyan (`#00fff0`), Magenta (`#ff00aa`) |
+| **Ember** | 🟠 ⬛ 🔴 | High-energy volcanic heat | Bright Amber (`#f97316`), Crimson (`#ef4444`) |
+| **Arctic** | 🔵 ⚪ 🔷 | Crisp, high-contrast daylight aesthetic | Royal Blue (`#3b82f6`), Sky Blue (`#06b6d4`), Ice White |
 
+---
+
+## 🛠️ Tech Stack & Architecture
+
+### **Core Frontend**
+- **[React 18](https://react.dev/)**: Component architecture, custom hooks, and React Context state.
+- **[Vite 7](https://vitejs.dev/)**: Next-generation frontend build tooling and local dev server.
+- **[Tailwind CSS 3](https://tailwindcss.com/)**: Utility-first responsive styling with custom animation keyframes.
+- **[Framer Motion 11](https://www.framer.com/motion/)**: Physics-based animations, layout transitions, and scroll reveals.
+- **[Lucide React](https://lucide.dev/)**: Clean, lightweight icon suite.
+
+### **Typography**
+- **Syne**: Geometric display heading typography.
+- **DM Sans**: High-legibility modern body sans-serif.
+- **JetBrains Mono**: Clean monospaced font for code snippets and tech badges.
+
+### **Integrations & Services**
+- **[EmailJS](https://www.emailjs.com/)**: Client-side transactional email service for the contact form.
+- **[Vercel](https://vercel.com/)**: Preconfigured zero-configuration serverless hosting via `vercel.json`.
+
+---
+
+## 🚀 Featured Projects
+
+The portfolio showcases key engineering work across deep learning, large language models, and full-stack software:
+
+### 1. [VidMind](https://github.com/Satjot05/Vidmind)
+> **LLM-Powered Video Intelligence, Notes & Quiz Generator**
+> - **Tech**: React 18, Python (Flask), Meta LLaMA 3.3 70B (Groq API), Vite, YouTube Transcript API
+> - Full-stack AI application that ingests any YouTube video URL and generates detailed 400–500 word summaries, structured study notes, interactive 10-question quizzes with scoring and explanations, and visual mind maps.
+> - Features automated model rotation across rate limits, multi-strategy caption extraction, and styled PDF downloads.
+
+### 2. [X-Ray Image Classifier](https://github.com/Satjot05/X-Ray-Image-Classifier)
+> **Deep Learning Diagnostic Triage for Pediatric Chest Radiographs**
+> - **Tech**: Python, PyTorch, Convolutional Neural Networks (CNN), Deep Learning, OpenCV
+> - AI-assisted medical diagnostic triage system trained to evaluate pediatric chest X-rays and classify scans as `NORMAL` or `PNEUMONIA`.
+> - Demonstrates clinical screening automation with medical image preprocessing, feature extraction, and prediction confidence scoring.
+
+### 3. [Bus Attendance System](https://github.com/Satjot05/Bus-Attendance-System)
+> **Automated Campus Transit Logistics & Student Attendance Tracking**
+> - **Tech**: React, Node.js, Express.js, MongoDB (MERN Stack), REST APIs, Tailwind CSS
+> - Full-stack web platform built to automate college bus transportation logistics and student boarding verification.
+> - Replaces error-prone paper rosters with digital check-in records, route management, driver assignment, and transport administration controls.
+
+---
+
+## 📂 Project Directory Structure
+
+```text
+Personal-Portfolio/
+├── public/
+│   ├── favicon.svg                     # Custom SVG browser favicon
+│   └── Satjot_Singh_Resume.docx        # Downloadable resume document
+├── src/
+│   ├── App.jsx                         # Main application layout, theme state, and sections
+│   ├── main.jsx                        # React root entry point
+│   └── index.css                       # Tailwind CSS directives and base layer
+├── index.html                          # HTML shell, web fonts & SEO OpenGraph tags
+├── package.json                        # Dependencies, scripts and package metadata
+├── postcss.config.js                   # PostCSS configuration for Tailwind
+├── tailwind.config.js                  # Tailwind themes, extended fonts, keyframes
+├── vercel.json                         # Vercel deployment and routing rules
+├── vite.config.js                      # Vite plugin pipeline and server config
+└── README.md                           # Documentation
+```
+
+---
+
+## ⚡ Getting Started
+
+Follow these steps to run the portfolio locally on your machine.
+
+### Prerequisites
+
+Ensure you have the following installed:
+- **Node.js** (v18.0.0 or higher recommended)
+- **npm** (or `pnpm` / `yarn`)
+- **Git**
+
+### Installation
+
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/Satjot05/Personal-Portfolio.git
+   cd Personal-Portfolio
+   ```
+
+2. **Install project dependencies**:
+   ```bash
+   npm install
+   ```
+
+3. **Start the local development server**:
+   ```bash
+   npm run dev
+   ```
+
+4. **Open in browser**:
+   Navigate to [http://localhost:3000](http://localhost:3000) (or the port specified in terminal output).
+
+---
+
+## ⚙️ Available Scripts
+
+In the project root, you can execute:
+
+| Command | Action |
+| :--- | :--- |
+| `npm run dev` | Starts Vite development server at `http://localhost:3000` with instant HMR. |
+| `npm run build` | Compiles and bundles production-ready assets into the `dist/` directory. |
+| `npm run preview` | Locally serves the production build from `dist/` to verify optimizations. |
+| `npm run lint` | Runs ESLint across all `.js` and `.jsx` files to ensure code quality. |
+
+---
+
+## 🔧 Customization Guide
+
+If you'd like to fork or adapt this portfolio for your own profile:
+
+### 1. Update Personal Profile & Copy
+Open `src/App.jsx` and edit the personal details:
+- **Hero Title & Subtitle**: Lines ~770–806
+- **Typewriter Words**: Update `TYPING_TEXTS` array (~line 444)
+- **About Bio & Code Terminal**: Inside the `<About />` component (~line 883)
+- **Stats Counter**: Adjust numbers for projects built, hackathons, CGPA (~line 844)
+
+### 2. Configure Projects
+Locate the `PROJECTS_DATA` array in `src/App.jsx` (~line 412) and update:
+```javascript
 const PROJECTS_DATA = [
   {
-    title: "VidMind",
-    tagline: "LLM-powered video intelligence, notes & quiz generator",
-    description:
-      "A full-stack AI web application that transforms any YouTube video into structured study notes, comprehensive summaries, interactive 10-question quizzes with scoring, and visual mind maps using Meta's LLaMA 3.3 70B via Groq API. Features caption extraction, model rotation, and styled PDF export.",
-    tech: ["React", "Python Flask", "Groq API", "LLaMA 3.3", "Vite", "YouTube API"],
-    icon: "⚡",
-    link: "https://github.com/Satjot05/Vidmind",
+    title: "Your Project Name",
+    tagline: "Short one-line pitch",
+    description: "Detailed description of the problem and solution...",
+    tech: ["Tech 1", "Tech 2", "Tech 3"],
+    icon: "🚀",
+    link: "https://github.com/your-username/your-repo",
   },
-  {
-    title: "X-Ray Image Classifier",
-    tagline: "Deep learning diagnostic triage for pediatric chest radiographs",
-    description:
-      "An AI-assisted clinical diagnostic triage system trained to evaluate pediatric chest X-rays and classify scans as NORMAL or PNEUMONIA. Utilizes convolutional neural networks (CNNs) with image preprocessing, evaluation metrics, and confidence scoring to streamline medical workflows.",
-    tech: ["Python", "PyTorch", "CNN", "Deep Learning", "Computer Vision", "OpenCV"],
-    icon: "🩻",
-    link: "https://github.com/Satjot05/X-Ray-Image-Classifier",
-  },
-  {
-    title: "Bus Attendance System",
-    tagline: "Automated campus transit logistics & student attendance tracking",
-    description:
-      "A full-stack web application designed to digitize and automate college bus logistics and student attendance tracking. Replaces manual paper rosters with real-time boarding verification, route management, driver assignment, and transport administration controls.",
-    tech: ["React", "Node.js", "Express.js", "MongoDB", "REST APIs", "Tailwind CSS"],
-    icon: "🚌",
-    link: "https://github.com/Satjot05/Bus-Attendance-System",
-  },
+  // Add additional projects as needed
 ];
+```
 
-const NAV_LINKS = ["About", "Skills", "Projects", "Contact"];
+### 3. Update Skills Matrix
+Modify `SKILLS_DATA` in `src/App.jsx` (~line 373) to reflect your own technical proficiencies and percentages.
 
-const TYPING_TEXTS = [
-  "AI/ML Engineer",
-  "Full-Stack Developer",
-  "Deep Learning Enthusiast",
-  "Open Source Contributor",
-  "Problem Solver",
-];
+### 4. Enable EmailJS Contact Form
+To connect the contact form to your own email address:
+1. Register for a free account at [EmailJS](https://www.emailjs.com/).
+2. Create an **Email Service** (e.g. Gmail) and obtain your `Service ID`.
+3. Create an **Email Template** with variables:
+   - `{{from_name}}`
+   - `{{from_email}}`
+   - `{{message}}`
+   - `{{to_name}}`
+4. Copy your **Public Key** from *Account → API Keys*.
+5. In `src/App.jsx` (~line 24), fill in your credentials:
+   ```javascript
+   const EMAILJS_SERVICE_ID  = "your_service_id";
+   const EMAILJS_TEMPLATE_ID = "your_template_id";
+   const EMAILJS_PUBLIC_KEY  = "your_public_key";
+   ```
 
-// ─────────────────────────────────────────────────────────────────────
-// HOOKS
-// ─────────────────────────────────────────────────────────────────────
+### 5. Replace Resume & Favicon
+- Place your new resume file in the `public/` directory and update the `href` and `download` attributes in `src/App.jsx`.
+- Replace `public/favicon.svg` with your own personal logo or avatar.
 
-function useTypingEffect(texts, typingSpeed = 80, deletingSpeed = 45, pauseMs = 1800) {
-  const [displayed, setDisplayed] = useState("");
-  const [textIdx, setTextIdx] = useState(0);
-  const [charIdx, setCharIdx] = useState(0);
-  const [deleting, setDeleting] = useState(false);
+---
 
-  useEffect(() => {
-    const current = texts[textIdx];
-    let timeout;
-    if (!deleting && charIdx < current.length) {
-      timeout = setTimeout(() => setCharIdx((c) => c + 1), typingSpeed);
-    } else if (!deleting && charIdx === current.length) {
-      timeout = setTimeout(() => setDeleting(true), pauseMs);
-    } else if (deleting && charIdx > 0) {
-      timeout = setTimeout(() => setCharIdx((c) => c - 1), deletingSpeed);
-    } else if (deleting && charIdx === 0) {
-      setDeleting(false);
-      setTextIdx((i) => (i + 1) % texts.length);
-    }
-    setDisplayed(current.slice(0, charIdx));
-    return () => clearTimeout(timeout);
-  }, [charIdx, deleting, textIdx, texts, typingSpeed, deletingSpeed, pauseMs]);
+## 🌐 Deployment
 
-  return displayed;
-}
+### Deploy to Vercel (Recommended)
 
-// ─────────────────────────────────────────────────────────────────────
-// ANIMATION VARIANTS
-// ─────────────────────────────────────────────────────────────────────
+This project contains a `vercel.json` file ready for automatic deployment:
 
-const fadeUp = {
-  hidden: { opacity: 0, y: 40 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.65, ease: [0.22, 1, 0.36, 1] } },
-};
-const stagger = (delay = 0.1) => ({
-  hidden: {},
-  show: { transition: { staggerChildren: delay } },
-});
-const scaleIn = {
-  hidden: { opacity: 0, scale: 0.88 },
-  show: { opacity: 1, scale: 1, transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] } },
-};
+1. Push your repository to GitHub.
+2. Visit [Vercel](https://vercel.com/) and click **"Add New Project"**.
+3. Import your GitHub repository.
+4. Leave build settings as default:
+   - **Framework Preset**: `Vite`
+   - **Build Command**: `npm run build`
+   - **Output Directory**: `dist`
+5. Click **Deploy**.
 
-// ─────────────────────────────────────────────────────────────────────
-// SHARED COMPONENTS
-// ─────────────────────────────────────────────────────────────────────
+### Deploy to Netlify
 
-function SectionLabel({ children }) {
-  const { theme } = useTheme();
-  return (
-    <motion.div variants={fadeUp} className="flex items-center gap-3 mb-4">
-      <span className="h-px w-8" style={{ background: theme.sectionLine }} />
-      <span className="text-xs font-mono tracking-[0.2em] uppercase" style={{ color: theme.sectionBadgeText }}>
-        {children}
-      </span>
-    </motion.div>
-  );
-}
+1. Create a `_redirects` file in `public/` with:
+   ```text
+   /* /index.html 200
+   ```
+2. Connect your repository on [Netlify](https://www.netlify.com/).
+3. Set **Build command** to `npm run build` and **Publish directory** to `dist`.
 
-function SectionHeading({ children }) {
-  const { theme } = useTheme();
-  return (
-    <motion.h2
-      variants={fadeUp}
-      className="text-4xl md:text-5xl font-bold leading-tight mb-6"
-      style={{ fontFamily: "'Syne', sans-serif", color: theme.text }}
-    >
-      {children}
-    </motion.h2>
-  );
-}
+---
 
-function GradientText({ children, gradient }) {
-  return (
-    <span
-      style={{
-        background: gradient,
-        WebkitBackgroundClip: "text",
-        WebkitTextFillColor: "transparent",
-        backgroundClip: "text",
-      }}
-    >
-      {children}
-    </span>
-  );
-}
+## 👤 Author & Connect
 
-function useScrollReveal() {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-80px" });
-  return [ref, isInView];
-}
+**Satjot Singh Saini**  
+*AI/ML Engineer & Full-Stack Developer*
 
-// ─────────────────────────────────────────────────────────────────────
-// NAVBAR
-// ─────────────────────────────────────────────────────────────────────
+- **GitHub**: [@Satjot05](https://github.com/Satjot05)
+- **LinkedIn**: [Satjot Singh Saini](https://www.linkedin.com/in/satjot-singh-saini/)
+- **Portfolio**: [Satjot's Portfolio](https://github.com/Satjot05)
 
-function Navbar() {
-  const { theme } = useTheme();
-  const [scrolled, setScrolled] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [active, setActive] = useState("");
+---
 
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40);
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+## 📄 License
 
-  // Auto-highlight nav based on which section is actually visible
-  useEffect(() => {
-    const observers = [];
-    NAV_LINKS.forEach((link) => {
-      const el = document.getElementById(link.toLowerCase());
-      if (!el) return;
-      const observer = new IntersectionObserver(
-        ([entry]) => { if (entry.isIntersecting) setActive(link); },
-        { rootMargin: "-40% 0px -55% 0px", threshold: 0 }
-      );
-      observer.observe(el);
-      observers.push(observer);
-    });
-    return () => observers.forEach((o) => o.disconnect());
-  }, []);
-
-  const scrollTo = (id) => {
-    document.getElementById(id.toLowerCase())?.scrollIntoView({ behavior: "smooth" });
-    setMenuOpen(false);
-  };
-
-  return (
-    <>
-      <motion.header
-        initial={{ y: -80, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-        style={{
-          background: scrolled ? theme.navBg : "transparent",
-          borderBottom: scrolled ? `1px solid ${theme.border}` : "1px solid transparent",
-          backdropFilter: scrolled ? "blur(20px)" : "none",
-        }}
-        className="fixed top-0 inset-x-0 z-50 transition-all duration-500"
-      >
-        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            className="flex items-center gap-2 cursor-pointer"
-            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          >
-            <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: theme.buttonPrimary }}>
-              <Terminal size={14} className="text-white" />
-            </div>
-            <span className="font-bold text-lg tracking-tight" style={{ fontFamily: "'Syne', sans-serif", color: theme.text }}>
-              dev<span style={{ color: theme.accentText }}>.</span>portfolio
-            </span>
-          </motion.div>
-
-          <nav className="hidden md:flex items-center gap-1">
-            {NAV_LINKS.map((link) => (
-              <motion.button
-                key={link}
-                onClick={() => scrollTo(link)}
-                whileHover={{ y: -1 }}
-                data-link={link}
-                style={{
-                  color: active === link ? theme.accentText : theme.textSub,
-                  background: active === link ? theme.sectionBadgeBg : "transparent",
-                  border: `1px solid ${active === link ? theme.sectionBadgeBorder : "transparent"}`,
-                }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.color = theme.accentText;
-                  e.currentTarget.style.background = theme.sectionBadgeBg;
-                  e.currentTarget.style.border = `1px solid ${theme.sectionBadgeBorder}`;
-                }}
-                onMouseLeave={e => {
-                  // Only reset if this link is not the currently active section
-                  const isActive = e.currentTarget.dataset.link === active;
-                  e.currentTarget.style.color = isActive ? theme.accentText : theme.textSub;
-                  e.currentTarget.style.background = isActive ? theme.sectionBadgeBg : "transparent";
-                  e.currentTarget.style.border = `1px solid ${isActive ? theme.sectionBadgeBorder : "transparent"}`;
-                }}
-                className="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200"
-              >
-                {link}
-              </motion.button>
-            ))}
-            <div className="ml-2">
-              <ThemeSwitcher />
-            </div>
-            <motion.a
-              href="/Satjot-Trident-Resume.docx"
-              download="Satjot-Trident-Resume.docx"
-              whileHover={{ scale: 1.04, boxShadow: `0 6px 25px ${theme.buttonPrimaryShadow}` }}
-              whileTap={{ scale: 0.97 }}
-              style={{ background: theme.buttonPrimary, boxShadow: `0 4px 15px ${theme.buttonPrimaryShadow}` }}
-              className="ml-2 px-4 py-2 text-sm font-semibold text-white rounded-lg transition-all duration-200"
-            >
-              Resume ↓
-            </motion.a>
-          </nav>
-
-          <div className="flex items-center gap-2 md:hidden">
-            <ThemeSwitcher />
-            <button style={{ color: theme.textSub }} className="hover:opacity-80 transition" onClick={() => setMenuOpen(!menuOpen)}>
-              {menuOpen ? <X size={22} /> : <Menu size={22} />}
-            </button>
-          </div>
-        </div>
-      </motion.header>
-
-      <AnimatePresence>
-        {menuOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.25 }}
-            style={{ background: theme.navBg, backdropFilter: "blur(20px)", borderBottom: `1px solid ${theme.border}` }}
-            className="fixed top-16 inset-x-0 z-40 md:hidden"
-          >
-            <div className="flex flex-col gap-1 p-4">
-              {NAV_LINKS.map((link) => (
-                <button
-                  key={link}
-                  onClick={() => scrollTo(link)}
-                  style={{ color: theme.textSub }}
-                  onMouseEnter={e => { e.currentTarget.style.color = theme.accentText; e.currentTarget.style.background = theme.sectionBadgeBg; }}
-                  onMouseLeave={e => { e.currentTarget.style.color = theme.textSub; e.currentTarget.style.background = "transparent"; }}
-                  className="text-left px-4 py-3 rounded-lg transition-all duration-200 text-sm font-medium"
-                >
-                  {link}
-                </button>
-              ))}
-              <a
-                href="/Satjot-Trident-Resume.docx"
-                download="Satjot-Trident-Resume.docx"
-                style={{ background: theme.buttonPrimary }}
-                className="mt-2 px-4 py-3 text-sm font-semibold text-white rounded-lg text-center"
-              >
-                Download Resume
-              </a>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </>
-  );
-}
-
-// ─────────────────────────────────────────────────────────────────────
-// HERO
-// ─────────────────────────────────────────────────────────────────────
-
-function GridBackground() {
-  const { theme } = useTheme();
-  const particles = useRef(
-    [...Array(18)].map(() => ({
-      left: `${Math.random() * 100}%`,
-      top: `${Math.random() * 100}%`,
-      duration: 3 + Math.random() * 4,
-      delay: Math.random() * 3,
-    }))
-  );
-
-  return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      <div
-        className="absolute inset-0 opacity-[0.04]"
-        style={{
-          backgroundImage: `
-            linear-gradient(${theme.gridColor} 1px, transparent 1px),
-            linear-gradient(90deg, ${theme.gridColor} 1px, transparent 1px)
-          `,
-          backgroundSize: "60px 60px",
-        }}
-      />
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full blur-3xl" style={{ background: theme.blob1 }} />
-      <div className="absolute bottom-1/3 right-1/4 w-80 h-80 rounded-full blur-3xl" style={{ background: theme.blob2 }} />
-      <div className="absolute top-1/2 right-1/3 w-64 h-64 rounded-full blur-3xl" style={{ background: theme.blob3 }} />
-      {particles.current.map((p, i) => (
-        <motion.div
-          key={i}
-          className="absolute w-1 h-1 rounded-full"
-          style={{ left: p.left, top: p.top, background: theme.particleColor }}
-          animate={{ y: [0, -30, 0], opacity: [0.2, 0.8, 0.2], scale: [1, 1.5, 1] }}
-          transition={{ duration: p.duration, repeat: Infinity, delay: p.delay, ease: "easeInOut" }}
-        />
-      ))}
-    </div>
-  );
-}
-
-function Hero() {
-  const { theme } = useTheme();
-  const typedText = useTypingEffect(TYPING_TEXTS);
-  const scrollToProjects = () =>
-    document.getElementById("projects")?.scrollIntoView({ behavior: "smooth" });
-
-  return (
-    <section id="hero" className="relative min-h-screen flex flex-col items-center justify-center text-center px-6 pt-20 overflow-hidden">
-      <GridBackground />
-      <div className="relative z-10 max-w-4xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.6 }}
-          style={{ background: theme.sectionBadgeBg, border: `1px solid ${theme.sectionBadgeBorder}`, color: theme.sectionBadgeText }}
-          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-mono tracking-widest mb-8"
-        >
-          <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: theme.availableDot }} />
-          AVAILABLE FOR INTERNSHIPS & PROJECTS
-        </motion.div>
-
-        <motion.h1
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.35, duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
-          className="text-5xl sm:text-6xl md:text-7xl font-black leading-[1.02] tracking-tighter mb-4"
-          style={{ fontFamily: "'Syne', sans-serif", color: theme.text }}
-        >
-          Building the Future
-          <br />
-          <GradientText gradient={theme.heroGradText}>with AI & Code</GradientText>
-        </motion.h1>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.55, duration: 0.6 }}
-          className="h-10 flex items-center justify-center mb-6"
-        >
-          <span className="text-xl md:text-2xl font-light" style={{ color: theme.textSub }}>
-            I'm a{" "}
-            <span className="font-semibold font-mono" style={{ color: theme.accentText }}>
-              {typedText}
-              <span className="animate-pulse" style={{ color: theme.accentText }}>|</span>
-            </span>
-          </span>
-        </motion.div>
-
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.7, duration: 0.6 }}
-          className="text-lg max-w-xl mx-auto leading-relaxed mb-10"
-          style={{ color: theme.textSub }}
-        >
-          4th-year B.Tech CSE student passionate about crafting intelligent systems
-          — from neural networks to production-grade web applications.
-        </motion.p>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.85, duration: 0.6 }}
-          className="flex flex-wrap gap-4 justify-center"
-        >
-          <motion.button
-            whileHover={{ scale: 1.04, y: -2, boxShadow: `0 12px 35px ${theme.buttonPrimaryShadow}` }}
-            whileTap={{ scale: 0.97 }}
-            onClick={scrollToProjects}
-            style={{ background: theme.buttonPrimary, boxShadow: `0 8px 25px ${theme.buttonPrimaryShadow}` }}
-            className="group flex items-center gap-2 px-7 py-3.5 text-white font-semibold rounded-xl transition-all duration-300"
-          >
-            View Projects
-            <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-          </motion.button>
-
-          <motion.a
-            href="/Satjot-Trident-Resume.docx"
-            download="Satjot-Trident-Resume.docx"
-            whileHover={{ scale: 1.04, y: -2, borderColor: theme.accentText, color: theme.accentText }}
-            whileTap={{ scale: 0.97 }}
-            style={{ background: theme.buttonSecBg, border: `1px solid ${theme.buttonSecBorder}`, color: theme.text }}
-            className="flex items-center gap-2 px-7 py-3.5 font-semibold rounded-xl backdrop-blur-sm transition-all duration-300"
-          >
-            Download Resume
-            <span style={{ color: theme.accentText }}>↓</span>
-          </motion.a>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.05, duration: 0.6 }}
-          className="flex flex-wrap justify-center gap-8 mt-16 pt-10"
-          style={{ borderTop: `1px solid ${theme.border}` }}
-        >
-          {[
-            { label: "Projects Built", value: "5+" },
-            { label: "Hackathons", value: "3" },
-            { label: "Technologies", value: "15+" },
-            { label: "CGPA", value: "7.3" },
-          ].map(({ label, value }) => (
-            <div key={label} className="text-center">
-              <div className="text-3xl font-black" style={{ fontFamily: "'Syne', sans-serif", color: theme.statValue }}>
-                {value}
-              </div>
-              <div className="text-xs mt-1 tracking-widest uppercase" style={{ color: theme.textMuted }}>
-                {label}
-              </div>
-            </div>
-          ))}
-        </motion.div>
-      </div>
-
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.4 }}
-        className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 cursor-pointer"
-        style={{ color: theme.textMuted }}
-        onClick={() => document.getElementById("about")?.scrollIntoView({ behavior: "smooth" })}
-      >
-        <span className="text-xs tracking-widest uppercase font-mono">Scroll</span>
-        <motion.div animate={{ y: [0, 8, 0] }} transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}>
-          <ChevronDown size={18} />
-        </motion.div>
-      </motion.div>
-    </section>
-  );
-}
-
-// ─────────────────────────────────────────────────────────────────────
-// ABOUT
-// ─────────────────────────────────────────────────────────────────────
-
-function About() {
-  const { theme } = useTheme();
-  const [ref, isInView] = useScrollReveal();
-
-  const highlights = [
-    { icon: Brain, text: "Applied AI Research" },
-    { icon: Code2, text: "Full Stack MERN" },
-    { icon: Layers, text: "DSA & Problem Solving" },
-    { icon: Award, text: "Hackathon Runner Up" },
-  ];
-
-  return (
-    <section id="about" className="py-28 px-6">
-      <div className="max-w-6xl mx-auto">
-        <motion.div ref={ref} initial="hidden" animate={isInView ? "show" : "hidden"} variants={stagger(0.12)}>
-          <SectionLabel>About Me</SectionLabel>
-          <div className="grid md:grid-cols-2 gap-16 items-center">
-            <div>
-              <SectionHeading>
-                Code. Learn.
-                <br />
-                <GradientText gradient={theme.accentGradText}>Innovate.</GradientText>
-              </SectionHeading>
-
-              <motion.p variants={fadeUp} className="text-lg leading-relaxed mb-5" style={{ color: theme.textSub }}>
-                I'm a 4th-year B.Tech Computer Science student specializing in{" "}
-                <span className="font-medium" style={{ color: theme.accentText }}>AI & Machine Learning</span>,
-                with a strong command of full-stack web development.
-              </motion.p>
-              <motion.p variants={fadeUp} className="text-lg leading-relaxed mb-8" style={{ color: theme.textSub }}>
-                I thrive at the intersection of{" "}
-                <span className="font-medium" style={{ color: theme.accentText }}>data structures, algorithms</span>, and{" "}
-                <span className="font-medium" style={{ color: theme.accentText }}>applied intelligence</span> — building
-                systems that are not only functional, but meaningfully smart.
-              </motion.p>
-
-              <motion.div variants={fadeUp} className="flex flex-wrap gap-3">
-                {[
-                  { icon: Coffee, text: "Open to Collaborate" },
-                  { icon: BookOpen, text: "Always Learning" },
-                  { icon: Zap, text: "Fast Executor" },
-                ].map(({ icon: Icon, text }) => (
-                  <motion.span
-                    key={text}
-                    whileHover={{ y: -2, borderColor: theme.accentText, color: theme.accentText }}
-                    style={{ background: theme.surface, border: `1px solid ${theme.border}`, color: theme.textSub }}
-                    className="flex items-center gap-2 px-3 py-1.5 rounded-full text-sm cursor-default transition-all duration-200"
-                  >
-                    <Icon size={13} style={{ color: theme.accentText }} />
-                    {text}
-                  </motion.span>
-                ))}
-              </motion.div>
-            </div>
-
-            <motion.div variants={stagger(0.1)} className="grid grid-cols-2 gap-4">
-              {highlights.map(({ icon: Icon, text }) => (
-                <motion.div
-                  key={text}
-                  variants={scaleIn}
-                  whileHover={{ y: -4, scale: 1.02, borderColor: theme.accentText + "55", boxShadow: `0 8px 25px ${theme.accent}18` }}
-                  style={{ background: theme.surface, border: `1px solid ${theme.border}` }}
-                  className="group p-5 rounded-2xl transition-all duration-300 cursor-default"
-                >
-                  <Icon size={26} className="mb-3" style={{ color: theme.accentText }} />
-                  <span className="text-sm font-medium leading-snug" style={{ color: theme.text }}>{text}</span>
-                </motion.div>
-              ))}
-
-              <motion.div
-                variants={scaleIn}
-                className="col-span-2 p-4 rounded-2xl font-mono text-xs overflow-hidden"
-                style={{ background: theme.codeBlock, border: `1px solid ${theme.border}` }}
-              >
-                <div className="flex items-center gap-1.5 mb-3">
-                  <div className="w-2.5 h-2.5 rounded-full bg-red-500/60" />
-                  <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/60" />
-                  <div className="w-2.5 h-2.5 rounded-full bg-green-500/60" />
-                  <span className="ml-2 text-[10px]" style={{ color: theme.textMuted }}>about.py</span>
-                </div>
-                <pre className="leading-relaxed text-[11px]" style={{ color: theme.textSub }}>
-                  <span style={{ color: theme.terminalColor }}>class</span>{" "}
-                  <span style={{ color: theme.accentText }}>Developer</span>
-                  {`:\n`}
-                  {"  "}<span style={{ color: theme.textMuted }}>name</span> ={" "}
-                  <span style={{ color: "#4ade80" }}>"Satjot Singh Saini"</span>
-                  {`\n`}
-                  {"  "}<span style={{ color: theme.textMuted }}>year</span> ={" "}
-                  <span style={{ color: "#fb923c" }}>4</span>
-                  {`\n`}
-                  {"  "}<span style={{ color: theme.textMuted }}>focus</span> ={" "}
-                  <span style={{ color: "#4ade80" }}>["AI", "ML", "MERN"]</span>
-                  {`\n`}
-                  {"  "}<span style={{ color: theme.textMuted }}>goal</span> ={" "}
-                  <span style={{ color: "#4ade80" }}>"Build things that matter"</span>
-                </pre>
-              </motion.div>
-            </motion.div>
-          </div>
-        </motion.div>
-      </div>
-    </section>
-  );
-}
-
-// ─────────────────────────────────────────────────────────────────────
-// SKILLS
-// ─────────────────────────────────────────────────────────────────────
-
-function SkillBar({ name, level, delay }) {
-  const { theme } = useTheme();
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true });
-
-  return (
-    <div ref={ref} className="mb-4">
-      <div className="flex justify-between items-center mb-1.5">
-        <span className="text-sm" style={{ color: theme.text }}>{name}</span>
-        <span className="text-xs font-mono" style={{ color: theme.textMuted }}>{level}%</span>
-      </div>
-      <div className="h-1 rounded-full overflow-hidden" style={{ background: theme.border }}>
-        <motion.div
-          className="h-full rounded-full"
-          style={{ background: theme.skillBar }}
-          initial={{ width: 0 }}
-          animate={isInView ? { width: `${level}%` } : { width: 0 }}
-          transition={{ duration: 1, delay: delay * 0.1 + 0.2, ease: [0.22, 1, 0.36, 1] }}
-        />
-      </div>
-    </div>
-  );
-}
-
-function Skills() {
-  const { theme } = useTheme();
-  const [ref, isInView] = useScrollReveal();
-
-  return (
-    <section id="skills" className="py-28 px-6">
-      <div className="max-w-6xl mx-auto">
-        <motion.div
-          ref={ref}
-          initial="hidden"
-          animate={isInView ? "show" : "hidden"}
-          variants={stagger(0.15)}
-          className="text-center mb-16"
-        >
-          <SectionLabel>Technical Skills</SectionLabel>
-          <SectionHeading>My Tech Arsenal</SectionHeading>
-          <motion.p variants={fadeUp} className="text-lg max-w-xl mx-auto" style={{ color: theme.textSub }}>
-            A curated set of skills spanning intelligent systems, scalable web platforms, and rigorous CS fundamentals.
-          </motion.p>
-        </motion.div>
-
-        <motion.div
-          initial="hidden"
-          animate={isInView ? "show" : "hidden"}
-          variants={stagger(0.15)}
-          className="grid md:grid-cols-3 gap-6"
-        >
-          {SKILLS_DATA.map(({ category, icon: Icon, items, skillKey }) => {
-            const sk = theme[skillKey];
-            return (
-              <motion.div
-                key={category}
-                variants={scaleIn}
-                whileHover={{
-                  y: -8,
-                  boxShadow: `0 16px 45px ${sk.from}28`,
-                }}
-                style={{ background: theme.surface, border: `1px solid ${theme.border}` }}
-                className="group relative p-6 rounded-2xl transition-all duration-300 shadow-xl overflow-hidden"
-              >
-                {/* Top glow strip */}
-                <div
-                  className="absolute inset-x-0 top-0 h-[3px] rounded-t-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                  style={{ background: `linear-gradient(90deg, ${sk.from}, ${sk.to})` }}
-                />
-
-                <div className="flex items-center gap-3 mb-6">
-                  <motion.div
-                    whileHover={{ scale: 1.12, rotate: 5 }}
-                    className="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg"
-                    style={{
-                      background: `linear-gradient(135deg, ${sk.from}, ${sk.to})`,
-                      boxShadow: `0 4px 14px ${sk.from}40`,
-                    }}
-                  >
-                    <Icon size={18} style={{ color: sk.icon }} />
-                  </motion.div>
-                  <h3 className="font-bold text-base leading-tight" style={{ fontFamily: "'Syne', sans-serif", color: theme.text }}>
-                    {category}
-                  </h3>
-                </div>
-                {items.map((skill, i) => (
-                  <SkillBar key={skill.name} {...skill} delay={i} />
-                ))}
-              </motion.div>
-            );
-          })}
-        </motion.div>
-
-        <motion.div
-          initial="hidden"
-          animate={isInView ? "show" : "hidden"}
-          variants={stagger(0.04)}
-          className="flex flex-wrap justify-center gap-2.5 mt-12"
-        >
-          {[
-            "Python", "TensorFlow", "PyTorch", "scikit-learn", "OpenCV",
-            "React", "Node.js", "MongoDB", "Express", "REST APIs",
-            "Git", "Linux", "SQL", "PHP", "Figma", "Framer", "JavaScript"
-          ].map((tech) => (
-            <motion.span
-              key={tech}
-              variants={scaleIn}
-              whileHover={{ scale: 1.08, y: -2 }}
-              style={{ background: theme.tagBg, border: `1px solid ${theme.tagBorder}`, color: theme.textSub }}
-              className="px-3 py-1.5 rounded-full text-xs font-mono transition-all duration-200 cursor-default hover:opacity-80"
-            >
-              {tech}
-            </motion.span>
-          ))}
-        </motion.div>
-      </div>
-    </section>
-  );
-}
-
-// ─────────────────────────────────────────────────────────────────────
-// PROJECTS
-// ─────────────────────────────────────────────────────────────────────
-
-function ProjectCard({ project, index }) {
-  const { theme } = useTheme();
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-60px" });
-  const [hovered, setHovered] = useState(false);
-
-  return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 50 }}
-      animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.65, delay: index * 0.15, ease: [0.22, 1, 0.36, 1] }}
-      whileHover={{ y: -10 }}
-      onHoverStart={() => setHovered(true)}
-      onHoverEnd={() => setHovered(false)}
-      style={{
-        background: hovered ? theme.surfaceHover : theme.surface,
-        border: `1px solid ${hovered ? theme.borderHover : theme.border}`,
-        boxShadow: hovered ? `0 0 0 1px ${theme.accent}22, 0 20px 60px ${theme.accent}18` : "0 4px 20px rgba(0,0,0,0.2)",
-        transition: "box-shadow 0.35s ease, border-color 0.35s ease, background 0.35s ease",
-      }}
-      className="group relative rounded-2xl cursor-default overflow-hidden"
-    >
-      {/* Glow strip at top on hover */}
-      <motion.div
-        className="absolute inset-x-0 top-0 h-[2px]"
-        style={{ background: theme.accentGrad }}
-        initial={{ scaleX: 0, opacity: 0 }}
-        animate={{ scaleX: hovered ? 1 : 0, opacity: hovered ? 1 : 0 }}
-        transition={{ duration: 0.3, ease: "easeOut" }}
-      />
-
-      <div className="rounded-[15px] p-7 h-full flex flex-col">
-        <div className="flex items-start justify-between mb-5">
-          <motion.div
-            className="text-4xl leading-none"
-            animate={{ scale: hovered ? 1.12 : 1 }}
-            transition={{ duration: 0.25 }}
-          >
-            {project.icon}
-          </motion.div>
-          <motion.a
-            href={project.link}
-            target="_blank"
-            rel="noopener noreferrer"
-            whileHover={{ scale: 1.15 }}
-            style={{
-              background: theme.accentGrad,
-              color: "#fff",
-              boxShadow: `0 4px 14px ${theme.buttonPrimaryShadow}`,
-            }}
-            className="w-10 h-10 rounded-xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <ExternalLink size={18} />
-          </motion.a>
-        </div>
-
-        <h3
-          className="text-xl font-bold mb-1 leading-snug transition-colors duration-200"
-          style={{
-            fontFamily: "'Syne', sans-serif",
-            color: hovered ? theme.accentText : theme.text,
-          }}
-        >
-          {project.title}
-        </h3>
-        <p className="text-xs font-mono mb-4" style={{ color: theme.textMuted }}>{project.tagline}</p>
-        <p className="text-sm leading-relaxed mb-6 flex-1" style={{ color: theme.textSub }}>{project.description}</p>
-
-        <div className="flex flex-wrap gap-2 mt-auto">
-          {project.tech.map((t) => (
-            <span
-              key={t}
-              style={{
-                background: hovered ? theme.tagHoverBg : theme.tagBg,
-                border: `1px solid ${hovered ? theme.tagHoverBorder : theme.tagBorder}`,
-                color: hovered ? theme.tagHoverText : theme.textSub,
-                transition: "all 0.25s ease",
-              }}
-              className="px-2.5 py-1 rounded-md text-[11px] font-mono"
-            >
-              {t}
-            </span>
-          ))}
-        </div>
-      </div>
-    </motion.div>
-  );
-}
-
-function Projects() {
-  const { theme } = useTheme();
-  const [ref, isInView] = useScrollReveal();
-
-  return (
-    <section id="projects" className="py-28 px-6">
-      <div className="max-w-6xl mx-auto">
-        <motion.div
-          ref={ref}
-          initial="hidden"
-          animate={isInView ? "show" : "hidden"}
-          variants={stagger(0.12)}
-          className="text-center mb-16"
-        >
-          <SectionLabel>Featured Work</SectionLabel>
-          <SectionHeading>
-            Projects I'm
-            <br />
-            <GradientText gradient={theme.heroGradText}>Proud Of</GradientText>
-          </SectionHeading>
-          <motion.p variants={fadeUp} className="text-lg max-w-xl mx-auto" style={{ color: theme.textSub }}>
-            From AI research prototypes to production-ready web platforms — each project represents a challenge solved with intention.
-          </motion.p>
-        </motion.div>
-
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {PROJECTS_DATA.map((project, i) => (
-            <ProjectCard key={project.title} project={project} index={i} />
-          ))}
-        </div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ delay: 0.6, duration: 0.5 }}
-          className="text-center mt-12"
-        >
-          <motion.a
-            href="https://github.com/Satjot05"
-            target="_blank"
-            rel="noopener noreferrer"
-            whileHover={{ y: -2, color: theme.accentText }}
-            style={{ color: theme.textSub }}
-            className="inline-flex items-center gap-2 text-sm font-medium transition-all duration-200 group"
-          >
-            <Github size={16} />
-            See all projects on GitHub
-            <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
-          </motion.a>
-        </motion.div>
-      </div>
-    </section>
-  );
-}
-
-// ─────────────────────────────────────────────────────────────────────
-// CONTACT  —  EmailJS powered
-// ─────────────────────────────────────────────────────────────────────
-
-function Contact() {
-  const { theme } = useTheme();
-  const [ref, isInView] = useScrollReveal();
-  const formRef = useRef(null);
-  const [formData, setFormData] = useState({ name: "", email: "", message: "" });
-  const [status, setStatus] = useState("idle"); // "idle" | "sending" | "sent" | "error"
-  const [errorMsg, setErrorMsg] = useState("");
-
-  const handleChange = (e) =>
-    setFormData((p) => ({ ...p, [e.target.name]: e.target.value }));
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setStatus("sending");
-    setErrorMsg("");
-
-    try {
-      await emailjs.send(
-        EMAILJS_SERVICE_ID,
-        EMAILJS_TEMPLATE_ID,
-        {
-          from_name: formData.name,
-          from_email: formData.email,
-          message: formData.message,
-          to_name: "Satjot",
-          reply_to: formData.email,
-        },
-        EMAILJS_PUBLIC_KEY
-      );
-
-      setStatus("sent");
-      setFormData({ name: "", email: "", message: "" });
-      setTimeout(() => setStatus("idle"), 5000);
-    } catch (err) {
-      console.error("EmailJS error:", err);
-      setErrorMsg("Failed to send. Please try again or email me directly.");
-      setStatus("error");
-      setTimeout(() => setStatus("idle"), 5000);
-    }
-  };
-
-  const socials = [
-    { icon: Github, label: "GitHub", href: "https://github.com/Satjot05" },
-    { icon: Linkedin, label: "LinkedIn", href: "https://www.linkedin.com/in/satjot-singh-saini/" },
-    { icon: Mail, label: "Email", href: "mailto:sainisatjot005@gmail.com" },
-  ];
-
-  const inputStyle = {
-    background: theme.inputBg,
-    border: `1px solid ${theme.inputBorder}`,
-    color: theme.text,
-  };
-
-  return (
-    <section id="contact" className="py-28 px-6">
-      <div className="max-w-5xl mx-auto">
-        <motion.div
-          ref={ref}
-          initial="hidden"
-          animate={isInView ? "show" : "hidden"}
-          variants={stagger(0.12)}
-          className="text-center mb-16"
-        >
-          <SectionLabel>Get In Touch</SectionLabel>
-          <SectionHeading>
-            Let's Build
-            <br />
-            <GradientText gradient={theme.accentGradText}>Something Great</GradientText>
-          </SectionHeading>
-          <motion.p variants={fadeUp} className="text-lg max-w-lg mx-auto" style={{ color: theme.textSub }}>
-            Whether you have a project idea, an internship opportunity, or just want to talk
-            tech — my inbox is always open.
-          </motion.p>
-        </motion.div>
-
-        <div className="grid md:grid-cols-2 gap-10">
-          {/* ── Form ── */}
-          <motion.form
-            ref={formRef}
-            initial={{ opacity: 0, x: -30 }}
-            animate={isInView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.65, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-            onSubmit={handleSubmit}
-            className="space-y-4"
-          >
-            {["name", "email"].map((field) => (
-              <div key={field}>
-                <label className="block text-xs font-mono uppercase tracking-widest mb-1.5" style={{ color: theme.textMuted }}>
-                  {field}
-                </label>
-                <input
-                  type={field === "email" ? "email" : "text"}
-                  name={field}
-                  required
-                  value={formData[field]}
-                  onChange={handleChange}
-                  placeholder={field === "name" ? "Your full name" : "your@email.com"}
-                  style={inputStyle}
-                  className="w-full px-4 py-3 rounded-xl text-sm focus:outline-none transition-all duration-200 placeholder-gray-600"
-                />
-              </div>
-            ))}
-
-            <div>
-              <label className="block text-xs font-mono uppercase tracking-widest mb-1.5" style={{ color: theme.textMuted }}>
-                Message
-              </label>
-              <textarea
-                name="message"
-                required
-                rows={5}
-                value={formData.message}
-                onChange={handleChange}
-                placeholder="Tell me about your project or idea..."
-                style={inputStyle}
-                className="w-full px-4 py-3 rounded-xl text-sm focus:outline-none transition-all duration-200 resize-none placeholder-gray-600"
-              />
-            </div>
-
-            {/* Error banner */}
-            <AnimatePresence>
-              {status === "error" && (
-                <motion.div
-                  initial={{ opacity: 0, y: -6 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -6 }}
-                  style={{ background: "rgba(239,68,68,0.12)", border: "1px solid rgba(239,68,68,0.30)", color: "#f87171" }}
-                  className="px-4 py-3 rounded-xl text-sm flex items-center gap-2"
-                >
-                  <AlertCircle size={14} />
-                  {errorMsg}
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            {/* Submit button */}
-            <motion.button
-              type="submit"
-              disabled={status === "sending" || status === "sent"}
-              whileHover={{ scale: status === "idle" ? 1.02 : 1, boxShadow: status === "idle" ? `0 10px 30px ${theme.buttonPrimaryShadow}` : "none" }}
-              whileTap={{ scale: 0.98 }}
-              style={
-                status === "sent"
-                  ? { background: theme.sentBg, border: `1px solid ${theme.sentBorder}`, color: theme.sentText }
-                  : { background: theme.buttonPrimary, boxShadow: `0 6px 20px ${theme.buttonPrimaryShadow}` }
-              }
-              className="w-full py-3.5 rounded-xl font-semibold flex items-center justify-center gap-2 transition-all duration-300 text-white"
-            >
-              {status === "idle" && (<><Send size={15} /> Send Message</>)}
-              {status === "sending" && (
-                <>
-                  <motion.div
-                    animate={{ rotate: 360 }}
-                    transition={{ repeat: Infinity, duration: 0.8, ease: "linear" }}
-                    className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full"
-                  />
-                  Sending…
-                </>
-              )}
-              {status === "sent" && (<><MailCheck size={15} /> Message Sent!</>)}
-            </motion.button>
-          </motion.form>
-
-          {/* ── Right column ── */}
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            animate={isInView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.65, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-            className="flex flex-col justify-between gap-8"
-          >
-            <div
-              className="p-6 rounded-2xl"
-              style={{ background: theme.availableCard, border: `1px solid ${theme.availableCardBorder}` }}
-            >
-              <div className="flex items-center gap-2 mb-3">
-                <span className="w-2 h-2 rounded-full animate-pulse" style={{ background: theme.availableDot }} />
-                <span className="text-sm font-medium" style={{ color: theme.availableText }}>Currently Available</span>
-              </div>
-              <p className="text-sm leading-relaxed" style={{ color: theme.text }}>
-                Open to internships, part-time collaboration, freelance ML/web projects, and
-                research opportunities. Let's build something impactful together.
-              </p>
-              <div className="mt-4 pt-4 text-xs font-mono" style={{ borderTop: `1px solid ${theme.border}`, color: theme.textMuted }}>
-                📍 India · Remote friendly
-              </div>
-            </div>
-
-            <div>
-              <p className="text-xs font-mono uppercase tracking-widest mb-4" style={{ color: theme.textMuted }}>
-                Find me online
-              </p>
-              <div className="flex flex-col gap-3">
-                {socials.map(({ icon: Icon, label, href }) => (
-                  <motion.a
-                    key={label}
-                    href={href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    whileHover={{ x: 4, borderColor: theme.accentText + "55", boxShadow: `0 4px 20px ${theme.accent}18` }}
-                    style={{ background: theme.surface, border: `1px solid ${theme.border}`, color: theme.textSub }}
-                    onMouseEnter={e => { e.currentTarget.style.color = theme.accentText; e.currentTarget.style.background = theme.sectionBadgeBg; }}
-                    onMouseLeave={e => { e.currentTarget.style.color = theme.textSub; e.currentTarget.style.background = theme.surface; }}
-                    className="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group"
-                  >
-                    <Icon size={16} />
-                    <span className="text-sm font-medium">{label}</span>
-                    <ArrowRight size={13} className="ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </motion.a>
-                ))}
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-// ─────────────────────────────────────────────────────────────────────
-// FOOTER
-// ─────────────────────────────────────────────────────────────────────
-
-function Footer() {
-  const { theme } = useTheme();
-  return (
-    <footer className="py-10 px-6" style={{ borderTop: `1px solid ${theme.footerBorder}` }}>
-      <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-sm" style={{ color: theme.textMuted }}>
-        <div className="flex items-center gap-2">
-          <Terminal size={13} style={{ color: theme.accentText }} />
-          <span>
-            Designed & built by{" "}
-            <span className="font-medium" style={{ color: theme.accentText }}>Satjot Singh Saini</span>
-          </span>
-        </div>
-        <span>B.Tech CSE (AI & ML) · 2023–2027</span>
-        <span>Built with React · Tailwind · Framer Motion</span>
-      </div>
-    </footer>
-  );
-}
-
-// ─────────────────────────────────────────────────────────────────────
-// SCROLL PROGRESS
-// ─────────────────────────────────────────────────────────────────────
-
-function ScrollProgress() {
-  const { theme } = useTheme();
-  const { scrollYProgress } = useScroll();
-  const scaleX = useTransform(scrollYProgress, [0, 1], [0, 1]);
-  return (
-    <motion.div
-      className="fixed top-0 left-0 right-0 h-[2px] z-[100] origin-left"
-      style={{ scaleX, background: theme.progressBar }}
-    />
-  );
-}
-
-// ─────────────────────────────────────────────────────────────────────
-// APP ROOT
-// ─────────────────────────────────────────────────────────────────────
-
-export default function App() {
-  const [themeId, setThemeId] = useState("midnight");
-  const theme = THEMES[themeId];
-
-  return (
-    <ThemeContext.Provider value={{ theme, setThemeId }}>
-      <motion.div
-        key={themeId}
-        initial={{ opacity: 0.7 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.4 }}
-        style={{
-          minHeight: "100vh",
-          background: theme.bg,
-          backgroundImage: theme.bgGradient,
-          color: theme.text,
-        }}
-        className="antialiased"
-      >
-        <style>{`
-          @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,400&display=swap');
-          * { box-sizing: border-box; }
-          html { scroll-behavior: smooth; }
-          ::-webkit-scrollbar { width: 4px; }
-          ::-webkit-scrollbar-track { background: ${theme.bg}; }
-          ::-webkit-scrollbar-thumb { background: ${theme.scrollbar}; border-radius: 4px; }
-          body { font-family: 'DM Sans', sans-serif; }
-          input::placeholder, textarea::placeholder { color: ${theme.textMuted}; }
-        `}</style>
-
-        <ScrollProgress />
-        <Navbar />
-
-        <main>
-          <Hero />
-          <About />
-          <Skills />
-          <Projects />
-          <Contact />
-        </main>
-
-        <Footer />
-      </motion.div>
-    </ThemeContext.Provider>
-  );
-}
+This project is open-source and licensed under the [MIT License](LICENSE). You are welcome to customize and use it for your own portfolio. A mention or star ⭐ is appreciated!
